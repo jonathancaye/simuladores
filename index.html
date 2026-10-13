@@ -341,6 +341,19 @@ tr.total td{background:var(--surface-2)!important;border-top:1px solid var(--fg-
 .winner .w-v{font:600 20px var(--f-num);color:var(--teal-ink)}
 .winner .w-s{font:11.5px var(--f-num);color:var(--fg-2);text-align:right}
 @media (max-width:720px){.winner{grid-template-columns:1fr}.winner .w-s{text-align:left}}
+.card-head.win-head{background:var(--teal);border-bottom:1px solid var(--teal-ink);padding:10px 12px;align-items:center;gap:8px 20px}
+.win-head .wh-l{min-width:0}
+.win-head .w-k{font:600 10px var(--f-num);letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.win-head .w-v{font:600 19px/1.25 var(--f-num);color:#fff;margin-top:2px}
+.win-head .wh-r{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;justify-content:flex-end}
+.win-head .w-s{font:11.5px/1.5 var(--f-num);color:rgba(255,255,255,.88);text-align:right}
+.win-head .w-s b{color:#fff;font-weight:600}
+.btn.inv{border-color:rgba(255,255,255,.7);color:#fff;background:transparent}
+.btn.inv:hover{background:rgba(255,255,255,.14)}
+.win-head .copied{color:#fff}
+.chips.sel .chip[aria-pressed="false"]{color:var(--fg-3);text-decoration:line-through;border-style:dashed}
+.chips.sel .chip[aria-pressed="true"]{border-color:var(--teal);color:var(--teal-ink);background:var(--teal-soft)}
+@media (max-width:720px){.win-head .w-s{text-align:left}.win-head .wh-r{justify-content:flex-start}}
 footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);font:11px/1.5 var(--f-ui);color:var(--fg-3)}
 @media (max-width:880px){.grid{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:560px){.hcol.rate{padding-left:0;border-left:0}}
@@ -369,7 +382,17 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
   <div class="module" id="m-cmp" hidden>
   <div class="grid">
     <section class="panel" aria-label="Premissas do comparador">
-      <div class="ph">Premissas<em>comuns às 4 opções</em></div>
+      <div class="ph">Premissas<em>comuns às opções</em></div>
+      <div class="field">
+        <div class="lbl">Opções a comparar<em>toque para incluir ou tirar</em></div>
+        <div class="chips sel" id="cOn">
+          <button type="button" class="chip" data-k="pre">Pré</button>
+          <button type="button" class="chip" data-k="pct">%CDI</button>
+          <button type="button" class="chip" data-k="cdip">CDI+</button>
+          <button type="button" class="chip" data-k="ipca">IPCA+</button>
+        </div>
+      </div>
+      <div class="sep"></div>
       <div class="two">
         <div class="field"><label class="lbl" for="cIni">Aplicação</label><div class="inrow sm"><input type="date" id="cIni"></div></div>
         <div class="field"><label class="lbl" for="cFim">Vencimento</label><div class="inrow sm"><input type="date" id="cFim"></div></div>
@@ -398,21 +421,22 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
 
     <section class="results" aria-live="polite">
       <div class="card">
-        <div class="card-head">
-          <div><h2>Comparativo no vencimento</h2></div>
-          <div class="actions">
-            <button type="button" class="btn ghost" id="cCopy">Copiar tabela</button>
-            <span class="copied" id="cCopied" hidden></span>
+        <div class="card-head win-head" id="cWinner">
+          <div class="wh-l">
+            <div class="w-k" id="cWinK">★ Melhor opção no vencimento</div>
+            <div class="w-v" id="cWinV">—</div>
           </div>
-        </div>
-        <div class="winner" id="cWinner">
-          <div class="w-k">Melhor opção</div>
-          <div class="w-v" id="cWinV">—</div>
-          <div class="w-s" id="cWinS">—</div>
+          <div class="wh-r">
+            <div class="w-s" id="cWinS">—</div>
+            <div class="actions">
+              <button type="button" class="btn inv" id="cCopy">Copiar tabela</button>
+              <span class="copied" id="cCopied" hidden></span>
+            </div>
+          </div>
         </div>
         <div class="tbl-wrap">
           <table class="cmp">
-            <colgroup><col class="rlc"><col><col><col><col></colgroup>
+            <colgroup id="cCols"><col class="rlc"><col><col><col><col></colgroup>
             <thead><tr><th class="rl">Valor aplicado <b class="num" id="cValLbl" style="color:var(--fg)">—</b></th>
               <th class="cc" data-k="pre">
                 <div class="cc-name"><span>Prefixado</span><span class="star" hidden>★ melhor</span></div>
@@ -1322,10 +1346,10 @@ $("eCopyT").addEventListener("click",()=>{ if(!eLast) return;
 
 /* =================== MÓDULO: COMPARADOR =================== */
 const CK=["pre","pct","cdip","ipca"];
-let C={rate:{pre:13,pct:92,cdip:1,ipca:6.5}, isento:{pre:false,pct:true,cdip:false,ipca:false}, ini:toISO(today), fim:toISO(addMonths(today,24)), valor:100000};
-try{ const cv=JSON.parse(localStorage.getItem("comparador.v1")||"null"); if(cv&&cv.rate) C=Object.assign(C,cv,{rate:Object.assign(C.rate,cv.rate),isento:Object.assign(C.isento,cv.isento||{})}); }catch(e){}
+let C={rate:{pre:13,pct:92,cdip:1,ipca:6.5}, isento:{pre:false,pct:true,cdip:false,ipca:false}, on:{pre:true,pct:true,cdip:true,ipca:true}, ini:toISO(today), fim:toISO(addMonths(today,24)), valor:100000};
+try{ const cv=JSON.parse(localStorage.getItem("comparador.v1")||"null"); if(cv&&cv.rate) C=Object.assign(C,cv,{rate:Object.assign(C.rate,cv.rate),isento:Object.assign(C.isento,cv.isento||{}),on:Object.assign(C.on,cv.on||{})}); }catch(e){}
 const cSave=()=>{ try{ localStorage.setItem("comparador.v1",JSON.stringify(C)); }catch(e){} };
-const cName = k => fmtRate(k,C.rate[k]/100)+" · "+(C.isento[k]?"isento":"tributado");
+const cName = k => (k==="pre"?"Pré ":"")+fmtRate(k,C.rate[k]/100)+" · "+(C.isento[k]?"isento":"tributado");
 let cLast=null;
 function cmpRender(){
   // controles
@@ -1339,36 +1363,43 @@ function cmpRender(){
   if(document.activeElement!==$("cIpca")) $("cIpca").value=nf(S.ipca);
   document.querySelectorAll("#cPrazos .chip").forEach(c=>c.setAttribute("aria-pressed",String(toISO(addMonths(parseISO(C.ini),+c.dataset.m))===C.fim)));
   $("cValLbl").textContent=brl(C.valor);
+  const A=CK.filter(k=>C.on[k]);
+  document.querySelectorAll("#cOn .chip").forEach(c=>c.setAttribute("aria-pressed",String(!!C.on[c.dataset.k])));
+  document.querySelectorAll(".cmp th.cc").forEach(th=>th.hidden=!C.on[th.dataset.k]);
+  $("cCols").innerHTML='<col class="rlc">'+A.map(()=>"<col>").join("");
+  document.querySelector(".cmp").style.minWidth=(190+150*A.length)+"px";
   cSave();
   // cálculo
   const ini=parseISO(C.ini), fim=parseISO(C.fim), V=C.valor, cdi=S.cdi/100, ipca=S.ipca/100;
   const R={}; let err=null;
-  CK.forEach(k=>{ const r=simCalc(V, C.isento[k]?"isento":"trib", k, C.rate[k]/100, ini, fim, cdi, ipca); if(r.err) err=r.err; R[k]=r; });
-  $("cNote").innerHTML=`<span><b>Só o prefixado tem taxa garantida.</b> %CDI, CDI+ e IPCA+ foram projetados com CDI de ${nf(S.cdi)}% e IPCA de ${nf(S.ipca)}% a.a.; a variação desses indicadores ao longo do prazo altera o resultado final.</span>`;
+  A.forEach(k=>{ const r=simCalc(V, C.isento[k]?"isento":"trib", k, C.rate[k]/100, ini, fim, cdi, ipca); if(r.err) err=r.err; R[k]=r; });
+  $("cNote").innerHTML=`<span><b>Só o prefixado tem a rentabilidade definida no momento da aplicação.</b> %CDI, CDI+ e IPCA+ foram projetados com CDI de ${nf(S.cdi)}% e IPCA de ${nf(S.ipca)}% a.a.; a variação desses indicadores ao longo do prazo altera o resultado final.</span>`;
   if(err){ $("cWarn").hidden=false; $("cWarn").textContent=err; $("cBody").innerHTML=""; $("cWinV").textContent="—"; $("cWinS").textContent=""; cLast=null; return; }
   $("cWarn").hidden=true;
-  const any=R.pre;
+  const any=R[A[0]];
   $("cDU").textContent=any.du.toLocaleString("pt-BR"); $("cDC").textContent=any.dc.toLocaleString("pt-BR");
-  const order=[...CK].sort((a,b)=>R[b].liq-R[a].liq), best=order[0], second=order[1];
+  const order=[...A].sort((a,b)=>R[b].liq-R[a].liq), best=order[0], second=order[1];
   document.querySelectorAll(".cmp th.cc").forEach(th=>{ const b=th.dataset.k===best; th.classList.toggle("win",b); th.querySelector(".star").hidden=!b; });
   const cell=(k,v,cls="")=>`<td class="num${k===best?" win":""}${cls?" "+cls:""}">${v}</td>`;
-  const row=(lbl,fn,cls="")=>`<tr class="${cls}"><td>${lbl}</td>${CK.map(k=>fn(k)).join("")}</tr>`;
-  const hasIof=CK.some(k=>R[k].iof>0);
+  const multi=A.length>1;
+  const row=(lbl,fn,cls="")=>`<tr class="${cls}"><td>${lbl}</td>${A.map(k=>fn(k)).join("")}</tr>`;
+  const hasIof=A.some(k=>R[k].iof>0);
   let h = row("Taxa a.a. (projetada)",k=>cell(k,nf(R[k].r*100)+"%"))
     + row("Rendimento bruto",k=>cell(k,brl(R[k].bruto)));
   if(hasIof) h += row("IOF",k=>cell(k,R[k].iof>0?"− "+brl(R[k].iof):"—",R[k].iof>0?"neg":""));
   h += row("Imposto de renda",k=>cell(k, C.isento[k]?"Isento":`− ${brl(R[k].irv)} <small style="color:var(--fg-3)">(${irLbl(R[k].ir)})</small>`, C.isento[k]?"":"neg"))
     + row("Rendimento líquido",k=>cell(k,brl(R[k].liq)))
     + row("Valor líquido no vencimento",k=>cell(k,brl(V+R[k].liq)),"total")
-    + row("Diferença para a melhor",k=>cell(k, k===best?"—":"− "+brl(R[best].liq-R[k].liq), k===best?"":"neg"))
+    + (multi? row("Diferença para a melhor",k=>cell(k, k===best?"—":"− "+brl(R[best].liq-R[k].liq), k===best?"":"neg")) : "")
     + row("Rentab. líquida no período",k=>cell(k,nf(R[k].gLiq*100)+"%"),"sub")
     + row("Taxa líquida a.m.",k=>cell(k,nf(R[k].am*100,3)+"%"),"sub")
     + row("Taxa líquida a.a. (252)",k=>cell(k,nf(R[k].aa252*100)+"%"),"sub")
     + row("Equivale a (líquido)",k=>cell(k,nf(R[k].pctCdi*100)+"% do CDI"),"sub");
   $("cBody").innerHTML=h;
+  $("cWinK").textContent = multi ? "★ Melhor opção no vencimento" : "Opção selecionada";
   $("cWinV").textContent=cName(best);
-  $("cWinS").innerHTML=`<b>${brl(V+R[best].liq)}</b> líquido · <b>${brl(R[best].liq-R[second].liq)}</b> a mais que a 2ª opção (${cName(second)})`;
-  cLast={R,best,V,ini,fim};
+  $("cWinS").innerHTML = `<b>${brl(V+R[best].liq)}</b> líquido · ${nf(R[best].am*100,3)}% a.m.` + (multi ? `<br><b>+ ${brl(R[best].liq-R[second].liq)}</b> sobre a 2ª opção (${cName(second)})` : "");
+  cLast={R,best,V,ini,fim,A};
 }
 CK.forEach(k=>{
   $("c_"+k).addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)){ C.rate[k]=v; cmpRender(); } });
@@ -1379,6 +1410,9 @@ document.querySelectorAll(".cmp .lnk[data-open]").forEach(b=>b.addEventListener(
   const k=b.dataset.open; T.tipo=C.isento[k]?"isento":"trib"; T.idx=k; T.rate[k]=C.rate[k]; T.ini=C.ini; T.fim=C.fim; T.valor=C.valor;
   showTab("sim"); syncAll();
 }));
+document.querySelectorAll("#cOn .chip").forEach(c=>c.addEventListener("click",()=>{
+  const k=c.dataset.k; if(C.on[k] && CK.filter(x=>C.on[x]).length===1) return; // mantém ao menos uma opção
+  C.on[k]=!C.on[k]; cmpRender(); }));
 document.querySelectorAll("#cPrazos .chip").forEach(c=>c.addEventListener("click",()=>{ C.fim=toISO(addMonths(parseISO(C.ini),+c.dataset.m)); cmpRender(); }));
 $("cIni").addEventListener("change",e=>{ if(e.target.value){ C.ini=e.target.value; cmpRender(); } });
 $("cFim").addEventListener("change",e=>{ if(e.target.value){ C.fim=e.target.value; cmpRender(); } });
@@ -1387,9 +1421,9 @@ $("cValor").addEventListener("blur",()=>{ $("cValor").value=C.valor.toLocaleStri
 $("cCdi").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)&&v>0){ S.cdi=v; S.manual=true; syncAll(); } });
 $("cIpca").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)){ S.ipca=v; S.manual=true; syncAll(); } });
 ["cCdi","cIpca"].forEach(k=>$(k).addEventListener("blur",()=>{ $(k).value=nf(k==="cCdi"?S.cdi:S.ipca); }));
-$("cCopy").addEventListener("click",()=>{ if(!cLast) return; const {R,V}=cLast;
-  const head=["", ...CK.map(k=>cName(k))].join("\t");
-  const L=(lbl,fn)=>[lbl,...CK.map(fn)].join("\t");
+$("cCopy").addEventListener("click",()=>{ if(!cLast) return; const {R,V,A}=cLast;
+  const head=["", ...A.map(k=>cName(k))].join("\t");
+  const L=(lbl,fn)=>[lbl,...A.map(fn)].join("\t");
   const lines=[head,
     L("Rendimento bruto",k=>nf(R[k].bruto)), L("Imposto de renda",k=>C.isento[k]?"Isento":nf(R[k].irv)),
     L("Rendimento líquido",k=>nf(R[k].liq)), L("Valor líquido no vencimento",k=>nf(V+R[k].liq)),
