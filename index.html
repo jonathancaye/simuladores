@@ -402,6 +402,13 @@ select.ci{font-family:var(--f-num);padding:2px 3px}
 .panel .chips.sel .chip[aria-pressed="true"]{background:var(--teal-soft);border-color:var(--teal)}
 .panel .chips.sel .chip[aria-pressed="false"]{background:transparent}
 .panel .meta{color:var(--fg-2)}
+.rtab{min-width:820px}
+.rtab th{position:sticky;top:0;background:var(--surface);z-index:1}
+.rtab th.r,.rtab td.num{text-align:right}
+.rtab td{white-space:nowrap}
+.rtab tr.fin td{background:var(--surface-2)!important;font-weight:700;border-top:1px solid var(--fg-3)}
+.kpi-v.pos{color:var(--teal-ink)}
+.kpi-v.neg{color:var(--orange)}
 footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);font:11px/1.5 var(--f-ui);color:var(--fg-3)}
 @media (max-width:880px){.grid{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:560px){.hcol.rate{padding-left:0;border-left:0}}
@@ -564,6 +571,27 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
         <button type="button" class="btn solid" id="lGo">Gerar escada</button>
         <span class="hint" id="lHint">Divide o valor total em degraus iguais, com vencimentos escalonados. Substitui as posições atuais.</span>
       </div>
+      <div class="ph sub">Reinvestimento<em>rolagem da escada</em></div>
+      <div class="field">
+        <div class="lbl">Reinvestir vencimentos</div>
+        <div class="pills" id="rOn"><button type="button" data-v="0" aria-pressed="true">Não</button><button type="button" data-v="1" aria-pressed="false">Sim</button></div>
+      </div>
+      <div id="rBox" hidden>
+        <div class="field">
+          <label class="lbl" for="rH">Horizonte da simulação</label>
+          <div class="inrow sm"><input id="rH" inputmode="numeric"><span class="unit">anos</span></div>
+        </div>
+        <div class="field" style="margin-top:10px">
+          <div class="lbl">Taxa de reinvestimento</div>
+          <div class="pills" id="rMode"><button type="button" data-v="longo" aria-pressed="true">Degrau longo</button><button type="button" data-v="fixa" aria-pressed="false">Informar</button><button type="button" data-v="ajuste" aria-pressed="false">Ajuste</button></div>
+          <div class="inrow sm" id="rValRow" hidden><input id="rVal" inputmode="decimal"><span class="unit" id="rValU">% a.a.</span></div>
+          <span class="hint" id="rHint">—</span>
+        </div>
+        <div class="field" style="margin-top:10px">
+          <div class="lbl">No vencimento</div>
+          <div class="pills dir" id="rReap"><button type="button" data-v="tudo" aria-pressed="true">Reaplicar tudo<br><small>principal + juros</small></button><button type="button" data-v="principal" aria-pressed="false">Resgatar juros<br><small>reaplica só o principal</small></button></div>
+        </div>
+      </div>
     </section>
 
     <section class="results" aria-live="polite">
@@ -577,6 +605,25 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
         </div>
         <div class="notice" id="pNote" hidden></div>
         <div class="warnbox" id="pWarn" hidden></div>
+      </div>
+      <div class="card" id="rCard" hidden>
+        <div class="card-head">
+          <div><h2>Reinvestimento da escada</h2><div class="alloc" id="rSub">—</div></div>
+          <div class="actions"><button type="button" class="btn ghost" id="rCopy">Copiar tabela</button><span class="copied" id="rCopied" hidden></span></div>
+        </div>
+        <div class="kpis k4" style="margin:0 -12px 8px">
+          <div class="kpi main"><div class="kpi-k" id="rK1">Patrimônio no horizonte</div><div class="kpi-v" id="rV1">—</div><div class="kpi-s" id="rS1">—</div></div>
+          <div class="kpi"><div class="kpi-k" id="rK2">Juros resgatados</div><div class="kpi-v" id="rV2">—</div><div class="kpi-s" id="rS2">—</div></div>
+          <div class="kpi"><div class="kpi-k">Retorno líquido anualizado</div><div class="kpi-v" id="rV3">—</div><div class="kpi-s" id="rS3">—</div></div>
+          <div class="kpi"><div class="kpi-k">vs. aplicação única</div><div class="kpi-v" id="rV4">—</div><div class="kpi-s" id="rS4">—</div></div>
+        </div>
+        <div class="tbl-wrap" style="max-height:330px;overflow:auto">
+          <table class="rtab">
+            <thead><tr><th>Data</th><th>Degrau</th><th class="r">Ciclo</th><th class="r">Líquido no venc.</th><th class="r">IR</th><th class="r">Juros resgatados</th><th class="r">Reaplicado</th><th class="r">Taxa</th><th class="r">Novo venc.</th></tr></thead>
+            <tbody id="rBody"></tbody>
+          </table>
+        </div>
+        <div class="notice" id="rNote" style="margin-top:10px"></div>
       </div>
 
       <div class="card">
@@ -1650,6 +1697,7 @@ function cartCalc(){
   const g={}; P.pos.forEach((p,i)=>{ if(R[i].err) return; const k=p.fim; g[k]=g[k]||{t:parseISO(k),pr:0,jr:0,ir:0,n:0}; g[k].pr+=p.valor; g[k].jr+=R[i].liq; g[k].ir+=R[i].irv+R[i].iof; g[k].n++; });
   pLast={bars:Object.values(g).sort((a,b)=>a.t-b.t), R, sV, sL};
   drawCart();
+  riCalc(R);
 }
 function drawCart(){
   if(!pLast) return;
@@ -1737,6 +1785,84 @@ $("lGo").addEventListener("click",()=>{
   lArmed=false; $("lGo").textContent="Gerar escada"; $("lGo").classList.remove("danger");
   buildLadder(); cartRows();
 });
+/* =================== REINVESTIMENTO DA ESCADA =================== */
+P.RI=Object.assign({on:false,H:10,mode:"longo",val:null,adj:0,reap:"tudo"}, P.RI||{});
+const monthsBetween=(a,b)=>{ const x=new Date(a), y=new Date(b); return (y.getUTCFullYear()-x.getUTCFullYear())*12+(y.getUTCMonth()-x.getUTCMonth()); };
+let rLast=null;
+function riCalc(R){
+  const ri=P.RI;
+  setPressed("rOn",ri.on?"1":"0"); setPressed("rMode",ri.mode); setPressed("rReap",ri.reap);
+  $("rBox").hidden=!ri.on; $("rCard").hidden=!ri.on;
+  if(document.activeElement!==$("rH")) $("rH").value=ri.H;
+  if(!ri.on){ rLast=null; return; }
+  const ini=parseISO(P.ini), cdi=S.cdi/100, ipca=S.ipca/100, Hend=addMonths(ini,Math.round(ri.H*12));
+  const valid=P.pos.map((p,i)=>({p,i})).filter(o=>R[o.i]&&!R[o.i].err);
+  if(!valid.length){ $("rCard").hidden=true; return; }
+  // degrau mais longo define produto, prazo e taxa padrão
+  const lg=valid.reduce((a,o)=>parseISO(o.p.fim)>parseISO(a.p.fim)?o:a).p;
+  const tenor=Math.max(1,monthsBetween(ini,parseISO(lg.fim)));
+  const rate = ri.mode==="fixa" ? (ri.val==null?lg.rate:ri.val) : ri.mode==="ajuste" ? lg.rate+(ri.adj||0) : lg.rate;
+  $("rValRow").hidden = ri.mode==="longo";
+  $("rValU").textContent = ri.mode==="ajuste" ? "p.p." : UNIT[lg.idx];
+  if(document.activeElement!==$("rVal")) $("rVal").value = ri.mode==="ajuste" ? nf(ri.adj||0) : nf(ri.mode==="fixa"?rate:lg.rate);
+  const prodTxt=`${PROD[lg.idx]} ${lg.isento?"isento":"tributado"}`;
+  $("rHint").textContent=`Cada vencimento é reaplicado em ${prodTxt} a ${fmtRate(lg.idx,rate/100)} por ${tenor} meses, o prazo do degrau mais longo.`;
+  // simulação
+  const V0=valid.reduce((a,o)=>a+o.p.valor,0);
+  let tr=valid.map(o=>({k:o.i+1,start:ini,end:parseISO(o.p.fim),valor:o.p.valor,idx:o.p.idx,isento:o.p.isento,rate:o.p.rate,c:0}));
+  const ev=[]; let renda=0, irTot=0, guard=0;
+  while(guard++<3000){
+    const open=tr.filter(t=>t.end<Hend); if(!open.length) break;
+    const t=open.reduce((a,b)=>b.end<a.end?b:a);
+    const r=simCalc(t.valor,t.isento?"isento":"trib",t.idx,t.rate/100,t.start,t.end,cdi,ipca);
+    tr.splice(tr.indexOf(t),1); if(r.err) continue;
+    const net=t.valor+r.liq, cash = ri.reap==="tudo" ? 0 : r.liq, reap = net-cash;
+    renda+=cash; irTot+=r.irv+r.iof;
+    const ne=Math.min(addMonths(t.end,tenor),Hend);
+    ev.push({d:t.end,k:t.k,c:t.c,net,ir:r.irv+r.iof,cash,reap,rate,idx:lg.idx,ne});
+    if(ne>t.end) tr.push({k:t.k,start:t.end,end:ne,valor:reap,idx:lg.idx,isento:lg.isento,rate,c:t.c+1});
+  }
+  // posições ainda abertas no horizonte (resgate na curva, sem marcação a mercado)
+  let fin=0, beyond=0;
+  tr.forEach(t=>{ const end=Math.min(t.end,Hend); if(t.end>Hend) beyond++;
+    const r=simCalc(t.valor,t.isento?"isento":"trib",t.idx,t.rate/100,t.start,end,cdi,ipca); if(r.err) return; fin+=t.valor+r.liq; irTot+=r.irv+r.iof; });
+  const total=fin+renda, dias=(Hend-ini)/DAY, anos=dias/365.25;
+  const aa=Math.pow(total/V0,1/anos)-1;
+  // aplicação única: tudo no produto do degrau longo, à taxa de hoje, até o horizonte
+  const u=simCalc(V0,lg.isento?"isento":"trib",lg.idx,lg.rate/100,ini,Hend,cdi,ipca);
+  const uTot=u.err?NaN:V0+u.liq, dif=total-uTot;
+  // render
+  const tudo=ri.reap==="tudo";
+  $("rSub").textContent=`${valid.length} degraus · horizonte de ${nf(ri.H,0)} anos (até ${fmtDate(Hend)}) · ${ev.length} reaplicações`;
+  $("rK1").textContent = tudo ? "Patrimônio no horizonte" : "Saldo aplicado no horizonte";
+  $("rV1").textContent=brl(fin); $("rS1").innerHTML=`aplicado ${brl(V0)} · IR total ${brl(irTot)}`;
+  $("rK2").textContent = tudo ? "Juros reinvestidos" : "Juros resgatados";
+  $("rV2").textContent = tudo ? brl(fin-V0) : brl(renda);
+  $("rS2").innerHTML = tudo ? "todos os juros ficam aplicados" : `média de <b>${brl(renda/Math.max(1,ri.H))}</b> por ano`;
+  $("rV3").innerHTML=nf(aa*100)+"%<small>a.a.</small>";
+  $("rS3").innerHTML = `total ${brl(total)}` + (tudo?"":" · renda não reinvestida");
+  $("rV4").textContent = isFinite(dif) ? (dif>=0?"+ ":"− ")+brl(Math.abs(dif)) : "—";
+  $("rV4").className="kpi-v "+(dif>=0?"pos":"neg");
+  $("rS4").innerHTML = isFinite(uTot) ? `única: ${PROD[lg.idx]} ${fmtRate(lg.idx,lg.rate/100)} até ${fmtDate(Hend).slice(3)} = ${brl(uTot)}`+(tudo?"":" · a escada considera os juros resgatados") : "—";
+  const sd=t=>fmtDate(t).slice(0,6)+fmtDate(t).slice(8);
+  $("rBody").innerHTML = ev.map(e=>`<tr><td class="num" style="text-align:left">${sd(e.d)}</td><td>${e.k}</td><td class="num">${e.c+1}º</td><td class="num">${brl(e.net)}</td><td class="num">${e.ir>0?brl(e.ir):"isento"}</td><td class="num">${e.cash>0?brl(e.cash):"—"}</td><td class="num">${brl(e.reap)}</td><td class="num">${fmtRate(e.idx,e.rate/100)}</td><td class="num">${e.ne<Hend?sd(e.ne):"horizonte"}</td></tr>`).join("")
+    + `<tr class="fin"><td>${sd(Hend)}</td><td colspan="2">Fim do horizonte</td><td class="num">${brl(fin)}</td><td></td><td class="num">${renda>0?brl(renda):"—"}</td><td></td><td></td><td class="num">${brl(total)}</td></tr>`;
+  $("rNote").innerHTML=`<span><b>Resultado projetado.</b> Supõe que cada vencimento seja reaplicado a ${fmtRate(lg.idx,rate/100)}${lg.idx!=="pre"?`, com CDI de ${nf(S.cdi)}% e IPCA de ${nf(S.ipca)}% a.a`:""}; taxas futuras podem ser diferentes. O último ciclo de cada degrau vai só até o fim do horizonte${beyond?`; ${beyond} posição(ões) vencem depois dele e foram consideradas pelo valor na curva, sem marcação a mercado`:""}.</span>`;
+  rLast={ev,fin,renda,total,Hend,uTot};
+}
+document.querySelectorAll("#rOn button").forEach(b=>b.addEventListener("click",()=>{ P.RI.on=b.dataset.v==="1"; cartCalc(); }));
+document.querySelectorAll("#rMode button").forEach(b=>b.addEventListener("click",()=>{ P.RI.mode=b.dataset.v; if(P.RI.mode==="fixa") P.RI.val=null; cartCalc(); }));
+document.querySelectorAll("#rReap button").forEach(b=>b.addEventListener("click",()=>{ P.RI.reap=b.dataset.v; cartCalc(); }));
+$("rH").addEventListener("input",e=>{ const v=parseInt(e.target.value,10); if(v>0&&v<=40){ P.RI.H=v; cartCalc(); } });
+$("rH").addEventListener("blur",()=>{ $("rH").value=P.RI.H; });
+$("rVal").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(!isFinite(v)) return; if(P.RI.mode==="ajuste") P.RI.adj=v; else P.RI.val=v; cartCalc(); });
+$("rVal").addEventListener("blur",()=>cartCalc());
+$("rCopy").addEventListener("click",()=>{ if(!rLast) return;
+  const head=["Data","Degrau","Ciclo","Líquido no venc.","IR","Juros resgatados","Reaplicado","Taxa","Novo venc."].join("\t");
+  const L=rLast.ev.map(e=>[fmtDate(e.d),e.k,e.c+1,nf(e.net),nf(e.ir),nf(e.cash),nf(e.reap),fmtRate(e.idx,e.rate/100),e.ne<rLast.Hend?fmtDate(e.ne):"horizonte"].join("\t"));
+  copyText([head,...L,`Fim do horizonte ${fmtDate(rLast.Hend)}\t\t\t${nf(rLast.fin)}\t\t${nf(rLast.renda)}\t\t\t${nf(rLast.total)}`].join("\n"),"rCopied","Tabela copiada");
+});
+
 /* do comparador para a carteira */
 $("cToCart").addEventListener("click",()=>{
   const A=CK.filter(k=>C.on[k]); if(!A.length) return; const n=A.length, base=r2(C.valor/n);
