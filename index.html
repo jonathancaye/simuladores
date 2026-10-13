@@ -354,6 +354,40 @@ tr.total td{background:var(--surface-2)!important;border-top:1px solid var(--fg-
 .chips.sel .chip[aria-pressed="false"]{color:var(--fg-3);text-decoration:line-through;border-style:dashed}
 .chips.sel .chip[aria-pressed="true"]{border-color:var(--teal);color:var(--teal-ink);background:var(--teal-soft)}
 @media (max-width:720px){.win-head .w-s{text-align:left}.win-head .wh-r{justify-content:flex-start}}
+/* ===== Carteira ===== */
+.kpis.k4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.kpis.k4 .kpi.main{grid-column:auto}
+.kpis.k4 .kpi-v{font-size:22px}
+@media (max-width:720px){.kpis.k4 .kpi-v{font-size:clamp(15px,4.6vw,20px)}.kpis.k4{grid-template-columns:1fr 1fr}.kpis.k4 .kpi.main{grid-column:auto;border-bottom:0}.kpis.k4 .kpi:nth-child(3){border-left:0}.kpis.k4 .kpi:nth-child(n+3){border-top:1px solid var(--line)}}
+.ph.sub{border-top:1px solid var(--line)}
+.ptab{min-width:940px;table-layout:fixed}
+.ptab th,.ptab td{white-space:nowrap;padding:4px 6px;vertical-align:middle}
+.ptab th{text-align:left}
+.ptab td.num,.ptab th.r{text-align:right}
+.ptab td.i{color:var(--fg-3);font:11px var(--f-num)}
+.ci{width:100%;border:1px solid var(--line);border-radius:2px;background:var(--surface);color:var(--fg);font:500 12.5px var(--f-num);padding:3px 5px;height:26px}
+.ci:focus{outline:none;border-color:var(--teal)}
+select.ci{font-family:var(--f-num);padding:2px 3px}
+.ci.r{text-align:right}
+.tg{width:100%;height:26px;border:1px solid var(--line);border-radius:2px;background:var(--surface);font:600 10.5px var(--f-num);text-transform:uppercase;letter-spacing:.04em;color:var(--fg-2);cursor:pointer}
+.tg.on{background:var(--teal-soft);border-color:var(--teal);color:var(--teal-ink)}
+.ptab td.res{font-weight:600}
+.ptab td.bad{color:var(--orange);font:11px var(--f-ui)}
+.alloc{font:11.5px var(--f-num);color:var(--fg-2)}
+.alloc.off{color:var(--orange)}
+.cols2{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:10px}
+@media (max-width:1100px){.cols2{grid-template-columns:minmax(0,1fr)}}
+.comp{width:100%}
+.comp td{padding:5px 6px}
+.comp td:first-child{width:34%;color:var(--fg-2)}
+.comp .bar{height:10px;background:var(--line);border-radius:1px;overflow:hidden}
+.comp .bar i{display:block;height:100%;background:var(--teal)}
+.comp tr.gap td{padding:2px;background:transparent!important;border:0}
+.legend i.pr{border-top:8px solid var(--teal);width:12px}
+.legend i.jr{border-top:8px solid var(--orange);width:12px}
+.ladbtn{display:flex;flex-direction:column;gap:4px}
+.ladbtn .btn{width:100%}
+.hint{font:11px var(--f-ui);color:var(--fg-3)}
 footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);font:11px/1.5 var(--f-ui);color:var(--fg-3)}
 @media (max-width:880px){.grid{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:560px){.hcol.rate{padding-left:0;border-left:0}}
@@ -375,8 +409,9 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
   <nav class="tabs" role="tablist" aria-label="Módulos">
     <button class="tab" role="tab" aria-selected="true" data-tab="sim"><kbd>1</kbd>Simulador</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="cmp"><kbd>2</kbd>Comparador</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="gross"><kbd>3</kbd>Gross-up</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="eq"><kbd>4</kbd>Equivalência</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="cart"><kbd>3</kbd>Carteira</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="gross"><kbd>4</kbd>Gross-up</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="eq"><kbd>5</kbd>Equivalência</button>
   </nav>
 
   <div class="module" id="m-cmp" hidden>
@@ -429,6 +464,7 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
           <div class="wh-r">
             <div class="w-s" id="cWinS">—</div>
             <div class="actions">
+              <button type="button" class="btn inv" id="cToCart">Levar para a carteira</button>
               <button type="button" class="btn inv" id="cCopy">Copiar tabela</button>
               <span class="copied" id="cCopied" hidden></span>
             </div>
@@ -472,6 +508,96 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
         </div>
         <div class="notice" id="cNote" style="margin-top:10px"></div>
         <div class="warnbox" id="cWarn" hidden></div>
+      </div>
+    </section>
+  </div>
+  </div>
+  <div class="module" id="m-cart" hidden>
+  <div class="grid">
+    <section class="panel" aria-label="Carteira">
+      <div class="ph">Carteira<em>premissas</em></div>
+      <div class="two">
+        <div class="field"><label class="lbl" for="pIni">Aplicação</label><div class="inrow sm"><input type="date" id="pIni"></div></div>
+        <div class="field"><label class="lbl" for="pTotal">Valor total</label><div class="inrow sm"><span class="unit">R$</span><input id="pTotal" inputmode="numeric"></div></div>
+      </div>
+      <div class="two">
+        <div class="field"><label class="lbl" for="pCdi">CDI proj.</label><div class="inrow sm"><input id="pCdi" inputmode="decimal"><span class="unit">% a.a.</span></div></div>
+        <div class="field"><label class="lbl" for="pIpca">IPCA proj.</label><div class="inrow sm"><input id="pIpca" inputmode="decimal"><span class="unit">% a.a.</span></div></div>
+      </div>
+      <div class="ph sub">Montar escada<em>ladder</em></div>
+      <div class="field">
+        <div class="lbl">Produto dos degraus</div>
+        <div class="pills" id="lIdx">
+          <button type="button" data-v="pre" aria-pressed="true">Pré</button>
+          <button type="button" data-v="pct" aria-pressed="false">%CDI</button>
+          <button type="button" data-v="cdip" aria-pressed="false">CDI+</button>
+          <button type="button" data-v="ipca" aria-pressed="false">IPCA+</button>
+        </div>
+        <div class="pills" id="lIse">
+          <button type="button" data-v="trib" aria-pressed="true">Tributado</button>
+          <button type="button" data-v="isento" aria-pressed="false">Isento</button>
+        </div>
+      </div>
+      <div class="two">
+        <div class="field"><label class="lbl" for="lN">Nº de degraus</label><div class="inrow sm"><input id="lN" inputmode="numeric"></div></div>
+        <div class="field"><div class="lbl">Intervalo</div>
+          <div class="pills" id="lStep"><button type="button" data-v="6" aria-pressed="false">6 m</button><button type="button" data-v="12" aria-pressed="true">1 ano</button></div>
+        </div>
+      </div>
+      <div class="two">
+        <div class="field"><label class="lbl" for="lRate">Taxa 1º degrau</label><div class="inrow sm"><input id="lRate" inputmode="decimal"><span class="unit" id="lRateU">% a.a.</span></div></div>
+        <div class="field"><label class="lbl" for="lSlope">+ por degrau</label><div class="inrow sm"><input id="lSlope" inputmode="decimal"><span class="unit">p.p.</span></div></div>
+      </div>
+      <div class="ladbtn">
+        <button type="button" class="btn solid" id="lGo">Gerar escada</button>
+        <span class="hint" id="lHint">Divide o valor total em degraus iguais, com vencimentos escalonados. Substitui as posições atuais.</span>
+      </div>
+    </section>
+
+    <section class="results" aria-live="polite">
+      <div class="hero">
+        <div class="ph">Resultado<em>carteira até o último vencimento</em></div>
+        <div class="kpis k4">
+          <div class="kpi"><div class="kpi-k">Valor aplicado</div><div class="kpi-v" id="kAp">—</div><div class="kpi-s" id="kApS">—</div></div>
+          <div class="kpi main"><div class="kpi-k">Valor líquido total</div><div class="kpi-v" id="kLq">—</div><div class="kpi-s" id="kLqS">—</div></div>
+          <div class="kpi"><div class="kpi-k">Taxa líquida média</div><div class="kpi-v" id="kTx">—</div><div class="kpi-s" id="kTxS">—</div></div>
+          <div class="kpi"><div class="kpi-k">Prazo médio</div><div class="kpi-v" id="kPz">—</div><div class="kpi-s" id="kPzS">—</div></div>
+        </div>
+        <div class="notice" id="pNote" hidden></div>
+        <div class="warnbox" id="pWarn" hidden></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div><h2>Posições</h2><div class="alloc" id="pAlloc">—</div></div>
+          <div class="actions">
+            <button type="button" class="btn ghost" id="pAdd">+ Posição</button>
+            <button type="button" class="btn ghost" id="pFit">Ajustar ao total</button>
+            <button type="button" class="btn ghost" id="pCopy">Copiar tabela</button>
+            <span class="copied" id="pCopied" hidden></span>
+          </div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="ptab">
+            <colgroup><col style="width:30px"><col style="width:96px"><col style="width:82px"><col style="width:96px"><col style="width:132px"><col style="width:118px"><col style="width:70px"><col style="width:128px"><col style="width:80px"><col style="width:84px"><col style="width:34px"></colgroup>
+            <thead><tr><th>#</th><th>Produto</th><th>IR</th><th class="r">Taxa</th><th>Vencimento</th><th class="r">Valor (R$)</th><th class="r">%</th><th class="r">Líquido no venc.</th><th class="r">Líq. a.a.</th><th class="r">IR (R$)</th><th></th></tr></thead>
+            <tbody id="pBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="cols2">
+        <div class="card">
+          <h2>Cronograma de vencimentos</h2>
+          <p class="sub">Quanto volta líquido em cada data de vencimento.</p>
+          <div class="legend"><span><i class="pr"></i>Principal</span><span><i class="jr"></i>Juros líquidos</span></div>
+          <div class="chart-box" id="pChartBox"><svg id="pChart" role="img" aria-label="Cronograma de vencimentos"></svg><div class="tip" id="pTip"></div></div>
+        </div>
+        <div class="card">
+          <h2>Composição</h2>
+          <p class="sub">Distribuição do valor aplicado.</p>
+          <table class="comp"><tbody id="pComp"></tbody></table>
+        </div>
       </div>
     </section>
   </div>
@@ -922,7 +1048,7 @@ function syncAll(){
   const months = Math.round((parseISO(S.fim)-parseISO(S.ini))/DAY/30.4375);
   document.querySelectorAll("#prazos .chip").forEach(c=>{
     c.setAttribute("aria-pressed", String(toISO(addMonths(parseISO(S.ini),+c.dataset.m))===S.fim)); });
-  render(); save(); simRender(); eqRender(); cmpRender();
+  render(); save(); simRender(); eqRender(); cmpRender(); cartRender();
   renderStatus();
 }
 document.querySelectorAll("#dir button").forEach(b=>b.addEventListener("click",()=>{ S.dir=b.dataset.v; syncAll(); }));
@@ -1431,8 +1557,185 @@ $("cCopy").addEventListener("click",()=>{ if(!cLast) return; const {R,V,A}=cLast
   copyText(lines.join("\n")+`\nAplicação de ${brl(V)} de ${fmtDate(cLast.ini)} a ${fmtDate(cLast.fim)}. Projeções: CDI ${nf(S.cdi)}%, IPCA ${nf(S.ipca)}% a.a.`,"cCopied","Tabela copiada");
 });
 
+/* =================== MÓDULO: CARTEIRA / ESCADA =================== */
+const PROD={pre:"Pré",pct:"%CDI",cdip:"CDI+",ipca:"IPCA+"};
+const UNIT={pre:"% a.a.",pct:"% CDI",cdip:"CDI + %",ipca:"IPCA + %"};
+let P={ini:toISO(today), total:100000, pos:[], L:{idx:"pre",isento:false,n:5,step:12,rate:12.5,slope:0.25}};
+try{ const pv=JSON.parse(localStorage.getItem("carteira.v1")||"null"); if(pv&&Array.isArray(pv.pos)) P=Object.assign(P,pv,{L:Object.assign(P.L,pv.L||{})}); }catch(e){}
+const pSave=()=>{ try{ localStorage.setItem("carteira.v1",JSON.stringify(P)); }catch(e){} };
+const r2=v=>Math.round(v*100)/100;
+function buildLadder(){
+  const L=P.L, n=Math.max(1,Math.min(30,Math.round(L.n))), base=r2(P.total/n), pos=[];
+  for(let i=1;i<=n;i++) pos.push({idx:L.idx,isento:L.isento,rate:r2(L.rate+L.slope*(i-1)),fim:toISO(addMonths(parseISO(P.ini),L.step*i)),valor: i<n?base:r2(P.total-base*(n-1))});
+  P.pos=pos;
+}
+if(!P.pos.length) buildLadder();
+
+function cartRows(){
+  $("pBody").innerHTML=P.pos.map((p,i)=>`<tr data-i="${i}">
+    <td class="i">${i+1}</td>
+    <td><select class="ci" data-f="idx" aria-label="Produto">${Object.keys(PROD).map(k=>`<option value="${k}"${k===p.idx?" selected":""}>${PROD[k]}</option>`).join("")}</select></td>
+    <td><button type="button" class="tg${p.isento?" on":""}" data-f="isento">${p.isento?"Isento":"Tribut."}</button></td>
+    <td><input class="ci r" data-f="rate" inputmode="decimal" value="${nf(p.rate)}" aria-label="Taxa (${UNIT[p.idx]})" title="${UNIT[p.idx]}"></td>
+    <td><input class="ci" type="date" data-f="fim" value="${p.fim}" aria-label="Vencimento"></td>
+    <td><input class="ci r" data-f="valor" inputmode="decimal" value="${nf(p.valor)}" aria-label="Valor"></td>
+    <td><input class="ci r" data-f="pct" inputmode="decimal" aria-label="Percentual"></td>
+    <td class="num res" id="pl_${i}">—</td><td class="num" id="pa_${i}">—</td><td class="num" id="pi_${i}">—</td>
+    <td><button type="button" class="x" data-f="del" aria-label="Remover posição">×</button></td></tr>`).join("");
+  cartCalc();
+}
+let pLast=null;
+function cartCalc(){
+  // painel
+  $("pIni").value=P.ini;
+  if(document.activeElement!==$("pTotal")) $("pTotal").value=P.total.toLocaleString("pt-BR");
+  if(document.activeElement!==$("pCdi")) $("pCdi").value=nf(S.cdi);
+  if(document.activeElement!==$("pIpca")) $("pIpca").value=nf(S.ipca);
+  setPressed("lIdx",P.L.idx); setPressed("lIse",P.L.isento?"isento":"trib"); setPressed("lStep",P.L.step);
+  if(document.activeElement!==$("lN")) $("lN").value=P.L.n;
+  if(document.activeElement!==$("lRate")) $("lRate").value=nf(P.L.rate);
+  if(document.activeElement!==$("lSlope")) $("lSlope").value=nf(P.L.slope);
+  $("lRateU").textContent=UNIT[P.L.idx];
+  pSave();
+  const ini=parseISO(P.ini), cdi=S.cdi/100, ipca=S.ipca/100;
+  let sV=0,sL=0,sIR=0,wAA=0,wDC=0,ok=0,bad=0,first=Infinity,last=-Infinity; const R=[];
+  P.pos.forEach((p,i)=>{
+    const fim=parseISO(p.fim), r=simCalc(p.valor, p.isento?"isento":"trib", p.idx, p.rate/100, ini, fim, cdi, ipca); R[i]=r;
+    const pc=$("pBody").querySelector(`tr[data-i="${i}"] [data-f="pct"]`);
+    if(pc && document.activeElement!==pc) pc.value = P.total>0 ? nf(p.valor/P.total*100) : "—";
+    if(r.err){ bad++; $("pl_"+i).textContent="data inválida"; $("pl_"+i).className="bad"; $("pa_"+i).textContent="—"; $("pi_"+i).textContent="—"; return; }
+    $("pl_"+i).className="num res";
+    $("pl_"+i).textContent=brl(p.valor+r.liq); $("pa_"+i).textContent=nf(r.aa252*100)+"%"; $("pi_"+i).textContent=p.isento?"isento":brl(r.irv);
+    sV+=p.valor; sL+=p.valor+r.liq; sIR+=r.irv+r.iof; wAA+=p.valor*r.aa252; wDC+=p.valor*r.dc; ok++;
+    first=Math.min(first,fim); last=Math.max(last,fim);
+  });
+  // alocação
+  const diff=r2(P.total-sV-(P.pos.reduce((a,p,i)=>a+(R[i]&&R[i].err?p.valor:0),0)));
+  const alloc=P.pos.reduce((a,p)=>a+p.valor,0);
+  const off=Math.abs(P.total-alloc)>=0.01;
+  $("pAlloc").className="alloc"+(off?" off":"");
+  $("pAlloc").textContent = `${P.pos.length} posições · alocado ${brl(alloc)} de ${brl(P.total)} (${P.total>0?nf(alloc/P.total*100,1):"0"}%)` + (off ? (alloc<P.total?` · faltam ${brl(P.total-alloc)}`:` · excede ${brl(alloc-P.total)}`) : "");
+  $("pFit").disabled=!off; $("pFit").style.opacity=off?1:.45;
+  // KPIs
+  $("pWarn").hidden=!bad; if(bad) $("pWarn").textContent=`${bad} posição(ões) com vencimento igual ou anterior à aplicação ficaram fora do resultado.`;
+  if(!ok){ ["kAp","kLq","kTx","kPz"].forEach(k=>$(k).textContent="—"); ["kApS","kLqS","kTxS","kPzS"].forEach(k=>$(k).textContent=""); $("pChart").innerHTML=""; $("pComp").innerHTML=""; pLast=null; return; }
+  const aa=wAA/sV, am=Math.pow(1+aa,21/252)-1, dcm=wDC/sV, pctC=fromAnnual("pct",aa,cdi,ipca);
+  $("kAp").textContent=brl(sV); $("kApS").textContent=`${ok} posições · ${P.total>0?nf(sV/P.total*100,1):"—"}% do total`;
+  $("kLq").textContent=brl(sL); $("kLqS").innerHTML=`juros líquidos <b>${brl(sL-sV)}</b> · IR ${brl(sIR)}`;
+  $("kTx").innerHTML=nf(aa*100)+"%<small>a.a.</small>"; $("kTxS").innerHTML=`<b>${nf(am*100,3)}%</b> a.m. · ${nf(pctC*100,1)}% do CDI`;
+  const anos=dcm/365.25; $("kPz").textContent = anos<1 ? Math.round(dcm/30.4375)+" meses" : nf(anos,1)+" anos";
+  $("kPzS").textContent=`venc. de ${fmtDate(first).slice(0,6)+fmtDate(first).slice(8)} a ${fmtDate(last).slice(0,6)+fmtDate(last).slice(8)}`;
+  const pos=P.pos.some(p=>p.idx!=="pre");
+  $("pNote").hidden=!pos;
+  if(pos) $("pNote").innerHTML=`<span><b>Resultado projetado.</b> As posições pós-fixadas usam CDI de ${nf(S.cdi)}% e IPCA de ${nf(S.ipca)}% a.a. A variação desses indicadores ao longo do prazo altera o resultado final.</span>`;
+  // composição
+  const byIdx={}, byIR={isento:0,trib:0};
+  P.pos.forEach((p,i)=>{ if(R[i].err) return; byIdx[p.idx]=(byIdx[p.idx]||0)+p.valor; byIR[p.isento?"isento":"trib"]+=p.valor; });
+  const crow=(l,v)=>`<tr><td>${l}</td><td style="width:38%"><div class="bar"><i style="width:${(v/sV*100).toFixed(1)}%"></i></div></td><td class="num">${brl(v)}</td><td class="num">${nf(v/sV*100,1)}%</td></tr>`;
+  $("pComp").innerHTML = Object.keys(PROD).filter(k=>byIdx[k]).map(k=>crow(IDX[k].name,byIdx[k])).join("")
+    + `<tr class="gap"><td colspan="4"></td></tr>` + (byIR.trib?crow("Tributado",byIR.trib):"") + (byIR.isento?crow("Isento",byIR.isento):"");
+  // cronograma
+  const g={}; P.pos.forEach((p,i)=>{ if(R[i].err) return; const k=p.fim; g[k]=g[k]||{t:parseISO(k),pr:0,jr:0,ir:0,n:0}; g[k].pr+=p.valor; g[k].jr+=R[i].liq; g[k].ir+=R[i].irv+R[i].iof; g[k].n++; });
+  pLast={bars:Object.values(g).sort((a,b)=>a.t-b.t), R, sV, sL};
+  drawCart();
+}
+function drawCart(){
+  if(!pLast) return;
+  const svg=$("pChart"), box=$("pChartBox"), bars=pLast.bars;
+  const W=Math.max(280,box.clientWidth), H=230, Pd={l:56,r:8,t:22,b:30};
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const max=Math.max(...bars.map(b=>b.pr+b.jr)); const ticks=niceTicks(0,max*1.08,4); const hi=ticks[ticks.length-1];
+  const Y=v=>Pd.t+(1-v/hi)*(H-Pd.t-Pd.b), bw=(W-Pd.l-Pd.r)/bars.length, w=Math.max(6,Math.min(46,bw*0.62));
+  const kf=v=> v>=1e6? nf(v/1e6,1)+" mi" : nf(v/1e3,v<1e4?1:0)+" mil";
+  let s="";
+  ticks.forEach(v=>{ s+=`<line x1="${Pd.l}" x2="${W-Pd.r}" y1="${Y(v)}" y2="${Y(v)}" stroke="var(--line)"/><text class="ax" x="${Pd.l-6}" y="${Y(v)+4}" text-anchor="end">${v?kf(v):"0"}</text>`; });
+  const lblEvery=Math.ceil(bars.length/Math.max(1,Math.floor((W-Pd.l)/54)));
+  bars.forEach((b,i)=>{ const cx=Pd.l+bw*(i+.5), x=cx-w/2, yP=Y(b.pr), yT=Y(b.pr+b.jr);
+    s+=`<rect x="${x}" y="${yP}" width="${w}" height="${H-Pd.b-yP}" fill="var(--teal)"/>`;
+    s+=`<rect x="${x}" y="${yT}" width="${w}" height="${Math.max(0,yP-yT-1.5)}" fill="var(--orange)"/>`;
+    if(bars.length<=10) s+=`<text class="ax" x="${cx}" y="${yT-5}" text-anchor="middle" style="fill:var(--fg-2)">${kf(b.pr+b.jr)}</text>`;
+    if(i%lblEvery===0){ const d=new Date(b.t); s+=`<text class="ax" x="${cx}" y="${H-Pd.b+16}" text-anchor="middle">${String(d.getUTCMonth()+1).padStart(2,"0")}/${String(d.getUTCFullYear()).slice(2)}</text>`; }
+    s+=`<rect class="hb" data-i="${i}" x="${cx-bw/2}" y="${Pd.t}" width="${bw}" height="${H-Pd.t-Pd.b}" fill="transparent"/>`;
+  });
+  s+=`<line x1="${Pd.l}" x2="${W-Pd.r}" y1="${H-Pd.b}" y2="${H-Pd.b}" stroke="var(--fg-3)"/>`;
+  svg.innerHTML=s;
+  const tip=$("pTip");
+  svg.querySelectorAll(".hb").forEach(r=>{
+    const show=()=>{ const b=bars[+r.dataset.i], rect=svg.getBoundingClientRect(), sx=W/rect.width;
+      tip.innerHTML=`${fmtDate(b.t)} · ${b.n} posição(ões)<br>Principal <b>${brl(b.pr)}</b><br>Juros líquidos <b>${brl(b.jr)}</b><br>Total líquido <b>${brl(b.pr+b.jr)}</b>${b.ir>0?`<br>IR/IOF ${brl(b.ir)}`:""}`;
+      tip.style.display="block"; const tw=tip.offsetWidth, cx=(Pd.l+bw*(+r.dataset.i+.5))/sx;
+      tip.style.left=Math.max(tw/2,Math.min(rect.width-tw/2,cx))+"px"; tip.style.top=(Y(b.pr+b.jr)/sx-8)+"px"; };
+    r.addEventListener("pointerenter",show); r.addEventListener("pointerdown",show);
+    r.addEventListener("pointerleave",()=>tip.style.display="none");
+  });
+}
+try{ let t; new ResizeObserver(()=>{ clearTimeout(t); t=setTimeout(drawCart,60); }).observe($("pChartBox")); }catch(e){}
+const cartRender=cartCalc;
+
+/* eventos da tabela */
+$("pBody").addEventListener("input",e=>{
+  const el=e.target, tr=el.closest("tr"); if(!tr) return; const i=+tr.dataset.i, p=P.pos[i], f=el.dataset.f;
+  if(f==="rate"){ const v=parseNum(el.value); if(isFinite(v)){ p.rate=v; cartCalc(); } }
+  else if(f==="valor"){ const v=parseNum(el.value); if(isFinite(v)&&v>=0){ p.valor=v; cartCalc(); } }
+  else if(f==="pct"){ const v=parseNum(el.value); if(isFinite(v)&&v>=0){ p.valor=r2(P.total*v/100); const vi=tr.querySelector('[data-f="valor"]'); vi.value=nf(p.valor); cartCalc(); } }
+});
+$("pBody").addEventListener("change",e=>{
+  const el=e.target, tr=el.closest("tr"); if(!tr) return; const i=+tr.dataset.i, p=P.pos[i], f=el.dataset.f;
+  if(f==="idx"){ p.idx=el.value; p.rate=IDX[p.idx].def; cartRows(); }
+  else if(f==="fim" && el.value){ p.fim=el.value; cartCalc(); }
+});
+$("pBody").addEventListener("focusout",e=>{
+  const el=e.target, tr=el.closest&&el.closest("tr"); if(!tr) return; const p=P.pos[+tr.dataset.i]; if(!p) return;
+  if(el.dataset.f==="rate") el.value=nf(p.rate); if(el.dataset.f==="valor") el.value=nf(p.valor); if(el.dataset.f==="pct") cartCalc();
+});
+$("pBody").addEventListener("click",e=>{
+  const el=e.target.closest("button"); if(!el) return; const tr=el.closest("tr"), i=+tr.dataset.i;
+  if(el.dataset.f==="isento"){ P.pos[i].isento=!P.pos[i].isento; el.classList.toggle("on",P.pos[i].isento); el.textContent=P.pos[i].isento?"Isento":"Tribut."; cartCalc(); }
+  if(el.dataset.f==="del"){ P.pos.splice(i,1); cartRows(); }
+});
+$("pAdd").addEventListener("click",()=>{ const lastP=P.pos[P.pos.length-1];
+  P.pos.push({idx:lastP?lastP.idx:"pre",isento:lastP?lastP.isento:false,rate:lastP?lastP.rate:IDX.pre.def,fim:toISO(addMonths(parseISO(P.ini),12)),valor:Math.max(0,r2(P.total-P.pos.reduce((a,p)=>a+p.valor,0)))});
+  cartRows(); });
+$("pFit").addEventListener("click",()=>{ const s=P.pos.reduce((a,p)=>a+p.valor,0); if(!(s>0)) return;
+  let acc=0; P.pos.forEach((p,i)=>{ p.valor = i<P.pos.length-1 ? r2(p.valor*P.total/s) : r2(P.total-acc); acc+=p.valor; }); cartRows(); });
+$("pCopy").addEventListener("click",()=>{ if(!pLast) return; const R=pLast.R;
+  const head=["#","Produto","IR","Taxa","Vencimento","Valor aplicado","% carteira","Líquido no venc.","Líq. a.a."].join("\t");
+  const lines=P.pos.map((p,i)=>R[i].err?null:[i+1,PROD[p.idx],p.isento?"Isento":"Tributado",fmtRate(p.idx,p.rate/100),fmtDate(parseISO(p.fim)),nf(p.valor),nf(p.valor/P.total*100)+"%",nf(p.valor+R[i].liq),nf(R[i].aa252*100)+"%"].join("\t")).filter(Boolean);
+  copyText([head,...lines,`Total\t\t\t\t\t${nf(pLast.sV)}\t\t${nf(pLast.sL)}\t${$("kTx").textContent}`].join("\n")+`\nProjeções: CDI ${nf(S.cdi)}%, IPCA ${nf(S.ipca)}% a.a.`,"pCopied","Tabela copiada");
+});
+/* painel */
+$("pIni").addEventListener("change",e=>{ if(e.target.value){ P.ini=e.target.value; cartCalc(); } });
+$("pTotal").addEventListener("input",e=>{ const v=parseInt(String(e.target.value).replace(/\D/g,""),10); P.total=isFinite(v)?v:0; cartCalc(); });
+$("pTotal").addEventListener("blur",()=>{ $("pTotal").value=P.total.toLocaleString("pt-BR"); });
+$("pCdi").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)&&v>0){ S.cdi=v; S.manual=true; syncAll(); } });
+$("pIpca").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)){ S.ipca=v; S.manual=true; syncAll(); } });
+["pCdi","pIpca"].forEach(k=>$(k).addEventListener("blur",()=>{ $(k).value=nf(k==="pCdi"?S.cdi:S.ipca); }));
+/* escada */
+document.querySelectorAll("#lIdx button").forEach(b=>b.addEventListener("click",()=>{ if(P.L.idx!==b.dataset.v){ P.L.idx=b.dataset.v; P.L.rate=IDX[P.L.idx].def; } cartCalc(); }));
+document.querySelectorAll("#lIse button").forEach(b=>b.addEventListener("click",()=>{ P.L.isento=b.dataset.v==="isento"; cartCalc(); }));
+document.querySelectorAll("#lStep button").forEach(b=>b.addEventListener("click",()=>{ P.L.step=+b.dataset.v; cartCalc(); }));
+$("lN").addEventListener("input",e=>{ const v=parseInt(e.target.value,10); if(v>0&&v<=30){ P.L.n=v; pSave(); } });
+$("lRate").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)){ P.L.rate=v; pSave(); } });
+$("lSlope").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)){ P.L.slope=v; pSave(); } });
+["lRate","lSlope"].forEach(k=>$(k).addEventListener("blur",()=>{ $(k).value=nf(k==="lRate"?P.L.rate:P.L.slope); }));
+$("lN").addEventListener("blur",()=>{ $("lN").value=P.L.n; });
+let lArmed=false;
+$("lGo").addEventListener("click",()=>{
+  if(P.pos.length && !lArmed){ lArmed=true; $("lGo").textContent=`Confirmar: substituir ${P.pos.length} posições`; $("lGo").classList.add("danger"); setTimeout(()=>{ lArmed=false; $("lGo").textContent="Gerar escada"; $("lGo").classList.remove("danger"); },4000); return; }
+  lArmed=false; $("lGo").textContent="Gerar escada"; $("lGo").classList.remove("danger");
+  buildLadder(); cartRows();
+});
+/* do comparador para a carteira */
+$("cToCart").addEventListener("click",()=>{
+  const A=CK.filter(k=>C.on[k]); if(!A.length) return; const n=A.length, base=r2(C.valor/n);
+  P.ini=C.ini; P.total=C.valor;
+  P.pos=A.map((k,i)=>({idx:k,isento:!!C.isento[k],rate:C.rate[k],fim:C.fim,valor: i<n-1?base:r2(C.valor-base*(n-1))}));
+  showTab("cart"); cartRows();
+});
+cartRows();
+
 /* =================== ABAS =================== */
-const TABS={gross:{h:'Gross-up isento × tributável'}, sim:{h:'Simulador de aplicação'}, eq:{h:'Equivalência de taxas'}, cmp:{h:'Comparador de aplicações'}};
+const TABS={gross:{h:'Gross-up isento × tributável'}, sim:{h:'Simulador de aplicação'}, eq:{h:'Equivalência de taxas'}, cmp:{h:'Comparador de aplicações'}, cart:{h:'Carteira e escada de vencimentos'}};
 function showTab(k){
   if(!TABS[k]) k="sim";
   document.querySelectorAll(".tab[data-tab]").forEach(t=>t.setAttribute("aria-selected",String(t.dataset.tab===k)));
@@ -1441,7 +1744,7 @@ function showTab(k){
 }
 document.querySelectorAll(".tab[data-tab]").forEach(t=>t.addEventListener("click",()=>showTab(t.dataset.tab)));
 let startTab="sim";
-if(location.hash==="#simulador") startTab="sim"; if(location.hash==="#equivalencia") startTab="eq"; if(location.hash==="#comparador") startTab="cmp"; if(location.hash==="#grossup") startTab="gross";
+if(location.hash==="#simulador") startTab="sim"; if(location.hash==="#equivalencia") startTab="eq"; if(location.hash==="#comparador") startTab="cmp"; if(location.hash==="#carteira") startTab="cart"; if(location.hash==="#grossup") startTab="gross";
 /* =================== INDICADORES OFICIAIS (indicadores.json) =================== */
 let IND=null;
 const mesAno = s => { if(!s) return ""; const [d,m,y]=s.split("/"); return ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"][+m-1]+"/"+String(y).slice(2); };
@@ -1472,7 +1775,7 @@ fetch("indicadores.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=
 document.addEventListener("keydown",e=>{
   if(e.altKey||e.ctrlKey||e.metaKey) return;
   const tg=e.target; if(tg&&(tg.tagName==="INPUT"||tg.tagName==="TEXTAREA"||tg.isContentEditable)) return;
-  const k={"1":"sim","2":"cmp","3":"gross","4":"eq"}[e.key]; if(k){ showTab(k); }
+  const k={"1":"sim","2":"cmp","3":"cart","4":"gross","5":"eq"}[e.key]; if(k){ showTab(k); }
 });
 showTab(startTab);
 

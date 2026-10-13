@@ -1,6 +1,6 @@
 # Simulador bancário · Renda fixa
 
-Página estática (GitHub Pages) com Simulador de aplicação, Comparador (Pré × %CDI × CDI+ × IPCA+), Gross-up e Equivalência de taxas.
+Página estática (GitHub Pages) com Simulador de aplicação, Comparador (Pré × %CDI × CDI+ × IPCA+), Carteira com escada de vencimentos (ladder), Gross-up e Equivalência de taxas.
 
 ## Indicadores automáticos
 `indicadores.json` é atualizado pela GitHub Action `.github/workflows/indicadores.yml`
