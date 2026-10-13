@@ -341,19 +341,20 @@ tr.total td{background:var(--surface-2)!important;border-top:1px solid var(--fg-
 .winner .w-v{font:600 20px var(--f-num);color:var(--teal-ink)}
 .winner .w-s{font:11.5px var(--f-num);color:var(--fg-2);text-align:right}
 @media (max-width:720px){.winner{grid-template-columns:1fr}.winner .w-s{text-align:left}}
-.card-head.win-head{background:var(--teal);border-bottom:1px solid var(--teal-ink);padding:10px 12px;align-items:center;gap:8px 20px}
+.card-head.win-head{display:grid;grid-template-columns:minmax(0,1fr) auto;background:var(--teal);border-bottom:1px solid var(--teal-ink);padding:10px 12px;align-items:center;gap:6px 20px}
+.win-head .actions{justify-content:flex-end}
 .win-head .wh-l{min-width:0}
 .win-head .w-k{font:600 10px var(--f-num);letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.8)}
 .win-head .w-v{font:600 19px/1.25 var(--f-num);color:#fff;margin-top:2px}
 .win-head .wh-r{display:flex;align-items:center;gap:8px 16px;flex-wrap:wrap;justify-content:flex-end}
-.win-head .w-s{font:11.5px/1.5 var(--f-num);color:rgba(255,255,255,.88);text-align:right}
+.win-head .w-s{grid-column:1/-1;font:11.5px/1.5 var(--f-num);color:rgba(255,255,255,.88);text-align:left;padding-top:6px;border-top:1px solid rgba(255,255,255,.25)}
 .win-head .w-s b{color:#fff;font-weight:600}
 .btn.inv{border-color:rgba(255,255,255,.7);color:#fff;background:transparent}
 .btn.inv:hover{background:rgba(255,255,255,.14)}
 .win-head .copied{color:#fff}
 .chips.sel .chip[aria-pressed="false"]{color:var(--fg-3);text-decoration:line-through;border-style:dashed}
 .chips.sel .chip[aria-pressed="true"]{border-color:var(--teal);color:var(--teal-ink);background:var(--teal-soft)}
-@media (max-width:720px){.win-head .w-s{text-align:left}.win-head .wh-r{justify-content:flex-start}}
+@media (max-width:720px){.card-head.win-head{grid-template-columns:minmax(0,1fr)}.win-head .actions{justify-content:flex-start;order:3}}
 /* ===== Carteira ===== */
 .kpis.k4{grid-template-columns:repeat(4,minmax(0,1fr))}
 .kpis.k4 .kpi.main{grid-column:auto}
@@ -388,6 +389,19 @@ select.ci{font-family:var(--f-num);padding:2px 3px}
 .ladbtn{display:flex;flex-direction:column;gap:4px}
 .ladbtn .btn{width:100%}
 .hint{font:11px var(--f-ui);color:var(--fg-3)}
+
+/* ===== Painel de parâmetros (barra lateral) ===== */
+:root{--side:#e9eef3;--side-2:#dce3ea;--side-line:#c9d3dc}
+.panel{background:var(--side);border-color:var(--side-line)}
+.panel .ph{background:var(--side-2);border-color:var(--side-line);color:var(--fg)}
+.panel .sep{background:var(--side-line)}
+.panel .pills{background:var(--surface);box-shadow:inset 0 0 0 1px var(--side-line)}
+.panel .inrow{background:var(--surface);border-color:var(--side-line)}
+.panel .chip{background:var(--surface);border-color:var(--side-line)}
+.panel .chip[aria-pressed="true"]{background:var(--orange-soft);border-color:var(--orange)}
+.panel .chips.sel .chip[aria-pressed="true"]{background:var(--teal-soft);border-color:var(--teal)}
+.panel .chips.sel .chip[aria-pressed="false"]{background:transparent}
+.panel .meta{color:var(--fg-2)}
 footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);font:11px/1.5 var(--f-ui);color:var(--fg-3)}
 @media (max-width:880px){.grid{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:560px){.hcol.rate{padding-left:0;border-left:0}}
@@ -461,14 +475,12 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
             <div class="w-k" id="cWinK">★ Melhor opção no vencimento</div>
             <div class="w-v" id="cWinV">—</div>
           </div>
-          <div class="wh-r">
-            <div class="w-s" id="cWinS">—</div>
-            <div class="actions">
-              <button type="button" class="btn inv" id="cToCart">Levar para a carteira</button>
-              <button type="button" class="btn inv" id="cCopy">Copiar tabela</button>
-              <span class="copied" id="cCopied" hidden></span>
-            </div>
+          <div class="actions">
+            <button type="button" class="btn inv" id="cToCart">Levar para a carteira</button>
+            <button type="button" class="btn inv" id="cCopy">Copiar tabela</button>
+            <span class="copied" id="cCopied" hidden></span>
           </div>
+          <div class="w-s" id="cWinS">—</div>
         </div>
         <div class="tbl-wrap">
           <table class="cmp">
@@ -1524,7 +1536,7 @@ function cmpRender(){
   $("cBody").innerHTML=h;
   $("cWinK").textContent = multi ? "★ Melhor opção no vencimento" : "Opção selecionada";
   $("cWinV").textContent=cName(best);
-  $("cWinS").innerHTML = `<b>${brl(V+R[best].liq)}</b> líquido · ${nf(R[best].am*100,3)}% a.m.` + (multi ? `<br><b>+ ${brl(R[best].liq-R[second].liq)}</b> sobre a 2ª opção (${cName(second)})` : "");
+  $("cWinS").innerHTML = `<b>${brl(V+R[best].liq)}</b> líquido · ${nf(R[best].am*100,3)}% a.m.` + (multi ? ` · <b>+ ${brl(R[best].liq-R[second].liq)}</b> sobre a 2ª opção (${cName(second)})` : "");
   cLast={R,best,V,ini,fim,A};
 }
 CK.forEach(k=>{
