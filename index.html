@@ -409,6 +409,22 @@ select.ci{font-family:var(--f-num);padding:2px 3px}
 .rtab tr.fin td{background:var(--surface-2)!important;font-weight:700;border-top:1px solid var(--fg-3)}
 .kpi-v.pos{color:var(--teal-ink)}
 .kpi-v.neg{color:var(--orange)}
+.split{display:flex;flex-direction:column;gap:6px;padding:4px 0 2px}
+.sp-bar{display:flex;height:14px;border-radius:2px;overflow:hidden;background:var(--line)}
+.sp-bar i{display:block;height:100%}
+.sp-rf{background:var(--teal)}
+.sp-rk{background:var(--orange);margin-left:2px}
+.sp-leg{display:flex;flex-wrap:wrap;gap:4px 18px;font:11.5px var(--f-num);color:var(--fg-2)}
+.sp-leg i{display:inline-block;width:10px;height:10px;margin-right:6px;vertical-align:-1px}
+.sp-leg i.pr{background:var(--teal)} .sp-leg i.jr{background:var(--orange)}
+.sp-leg b{color:var(--fg)}
+.ktab{min-width:720px}
+.ktab th.r,.ktab td.num{text-align:right}
+.ktab td{white-space:nowrap}
+.ktab tr.cus td{background:var(--orange-soft)!important;font-weight:600}
+.ktab tr.zero td{border-top:1px solid var(--fg-3)}
+.ktab td.pos{color:var(--teal-ink)} .ktab td.neg{color:var(--orange)}
+.ktab .tagc{font:700 9.5px var(--f-num);letter-spacing:.05em;text-transform:uppercase;color:var(--orange);margin-left:6px}
 footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);font:11px/1.5 var(--f-ui);color:var(--fg-3)}
 @media (max-width:880px){.grid{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:560px){.hcol.rate{padding-left:0;border-left:0}}
@@ -431,8 +447,9 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
     <button class="tab" role="tab" aria-selected="true" data-tab="sim"><kbd>1</kbd>Simulador</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="cmp"><kbd>2</kbd>Comparador</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="cart"><kbd>3</kbd>Carteira</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="gross"><kbd>4</kbd>Gross-up</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="eq"><kbd>5</kbd>Equivalência</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="prot"><kbd>4</kbd>Capital protegido</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="gross"><kbd>5</kbd>Gross-up</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="eq"><kbd>6</kbd>Equivalência</button>
   </nav>
 
   <div class="module" id="m-cmp" hidden>
@@ -657,6 +674,95 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
           <p class="sub">Distribuição do valor aplicado.</p>
           <table class="comp"><tbody id="pComp"></tbody></table>
         </div>
+      </div>
+    </section>
+  </div>
+  </div>
+  <div class="module" id="m-prot" hidden>
+  <div class="grid">
+    <section class="panel" aria-label="Capital protegido">
+      <div class="ph">Parâmetros<em>capital protegido</em></div>
+      <div class="field">
+        <label class="lbl" for="kCap">Capital total</label>
+        <div class="inrow"><span class="unit">R$</span><input id="kCap" inputmode="numeric"></div>
+      </div>
+      <div class="two">
+        <div class="field"><label class="lbl" for="kIni">Aplicação</label><div class="inrow sm"><input type="date" id="kIni"></div></div>
+        <div class="field"><label class="lbl" for="kFim">Vencimento</label><div class="inrow sm"><input type="date" id="kFim"></div></div>
+      </div>
+      <div class="chips" id="kPrazos" aria-label="Prazos rápidos">
+        <button type="button" class="chip" data-m="12">1 ano</button>
+        <button type="button" class="chip" data-m="24">2 anos</button>
+        <button type="button" class="chip" data-m="36">3 anos</button>
+        <button type="button" class="chip" data-m="48">4 anos</button>
+        <button type="button" class="chip" data-m="60">5 anos</button>
+      </div>
+      <div class="ph sub">Renda fixa da proteção<em>parte protegida</em></div>
+      <div class="field">
+        <div class="pills" id="kIdx">
+          <button type="button" data-v="pre" aria-pressed="true">Pré</button>
+          <button type="button" data-v="pct" aria-pressed="false">%CDI</button>
+          <button type="button" data-v="cdip" aria-pressed="false">CDI+</button>
+          <button type="button" data-v="ipca" aria-pressed="false">IPCA+</button>
+        </div>
+        <div class="pills" id="kIse">
+          <button type="button" data-v="trib" aria-pressed="true">Tributado</button>
+          <button type="button" data-v="isento" aria-pressed="false">Isento</button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl" for="kRate">Taxa</label>
+        <div class="inrow"><input id="kRate" inputmode="decimal" autocomplete="off"><span class="unit" id="kRateU">% a.a.</span></div>
+      </div>
+      <div class="two">
+        <div class="field"><label class="lbl" for="kCdi">CDI proj.</label><div class="inrow sm"><input id="kCdi" inputmode="decimal"><span class="unit">% a.a.</span></div></div>
+        <div class="field"><label class="lbl" for="kIpca">IPCA proj.</label><div class="inrow sm"><input id="kIpca" inputmode="decimal"><span class="unit">% a.a.</span></div></div>
+      </div>
+      <div class="ph sub">Objetivo<em>o que proteger</em></div>
+      <div class="field">
+        <div class="pills dir" id="kAlvo">
+          <button type="button" data-v="nominal" aria-pressed="true">Capital nominal<br><small>devolve o valor aplicado</small></button>
+          <button type="button" data-v="real" aria-pressed="false">Poder de compra<br><small>capital corrigido pelo IPCA</small></button>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lbl" for="kCus">Cenário do ativo de risco<em>retorno no período</em></label>
+        <div class="inrow sm"><input id="kCus" inputmode="decimal"><span class="unit">% no período</span></div>
+      </div>
+    </section>
+
+    <section class="results" aria-live="polite">
+      <div class="hero">
+        <div class="ph">Resultado<em>alocação para proteger o capital</em></div>
+        <div class="kpis k4">
+          <div class="kpi main"><div class="kpi-k">Aplicar na renda fixa</div><div class="kpi-v" id="kX">—</div><div class="kpi-s" id="kXS">—</div></div>
+          <div class="kpi"><div class="kpi-k">Disponível para risco</div><div class="kpi-v" id="kR">—</div><div class="kpi-s" id="kRS">—</div></div>
+          <div class="kpi"><div class="kpi-k">Renda fixa no vencimento</div><div class="kpi-v" id="kT">—</div><div class="kpi-s" id="kTS">—</div></div>
+          <div class="kpi"><div class="kpi-k">Taxa líquida da RF</div><div class="kpi-v" id="kA">—</div><div class="kpi-s" id="kAS">—</div></div>
+        </div>
+        <div class="split" aria-label="Divisão do capital">
+          <div class="sp-bar"><i class="sp-rf" id="kBarRF"></i><i class="sp-rk" id="kBarRK"></i></div>
+          <div class="sp-leg"><span><i class="pr"></i><b id="kLegRF">—</b> renda fixa (protegida)</span><span><i class="jr"></i><b id="kLegRK">—</b> ativo de risco</span></div>
+        </div>
+        <div class="warnbox" id="kWarn" hidden></div>
+        <div class="actions">
+          <button type="button" class="btn ghost" id="kCopy">Copiar resumo</button>
+          <span class="copied" id="kCopied" hidden></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div><h2>Cenários no vencimento</h2><div class="alloc" id="kScSub">—</div></div>
+          <div class="actions"><button type="button" class="btn ghost" id="kCopyT">Copiar tabela</button><span class="copied" id="kCopiedT" hidden></span></div>
+        </div>
+        <div class="tbl-wrap">
+          <table class="ktab">
+            <thead><tr><th>Ativo de risco</th><th class="r">Valor do risco</th><th class="r">Renda fixa</th><th class="r">Total no vencimento</th><th class="r">Resultado</th><th class="r">a.a.</th><th class="r">vs. 100% RF</th></tr></thead>
+            <tbody id="kBody"></tbody>
+          </table>
+        </div>
+        <div class="notice" id="kNote" style="margin-top:10px"></div>
       </div>
     </section>
   </div>
@@ -1107,7 +1213,7 @@ function syncAll(){
   const months = Math.round((parseISO(S.fim)-parseISO(S.ini))/DAY/30.4375);
   document.querySelectorAll("#prazos .chip").forEach(c=>{
     c.setAttribute("aria-pressed", String(toISO(addMonths(parseISO(S.ini),+c.dataset.m))===S.fim)); });
-  render(); save(); simRender(); eqRender(); cmpRender(); cartRender();
+  render(); save(); simRender(); eqRender(); cmpRender(); cartRender(); protRender();
   renderStatus();
 }
 document.querySelectorAll("#dir button").forEach(b=>b.addEventListener("click",()=>{ S.dir=b.dataset.v; syncAll(); }));
@@ -1872,8 +1978,81 @@ $("cToCart").addEventListener("click",()=>{
 });
 cartRows();
 
+/* =================== MÓDULO: CAPITAL PROTEGIDO =================== */
+let K={cap:100000, ini:toISO(today), fim:toISO(addMonths(today,36)), idx:"pre", isento:false, rate:{pre:13,pct:100,cdip:1,ipca:6.5}, alvo:"nominal", cus:30};
+try{ const kv=JSON.parse(localStorage.getItem("protegido.v1")||"null"); if(kv&&kv.rate) K=Object.assign(K,kv,{rate:Object.assign(K.rate,kv.rate)}); }catch(e){}
+const kSave=()=>{ try{ localStorage.setItem("protegido.v1",JSON.stringify(K)); }catch(e){} };
+const KSC=[-100,-50,-20,0,10,20,50,100];
+let kLast=null;
+function protRender(){
+  setPressed("kIdx",K.idx); setPressed("kIse",K.isento?"isento":"trib"); setPressed("kAlvo",K.alvo);
+  if(document.activeElement!==$("kCap")) $("kCap").value=K.cap.toLocaleString("pt-BR");
+  $("kIni").value=K.ini; $("kFim").value=K.fim;
+  if(document.activeElement!==$("kRate")) $("kRate").value=nf(K.rate[K.idx]);
+  $("kRateU").textContent=UNIT[K.idx];
+  if(document.activeElement!==$("kCdi")) $("kCdi").value=nf(S.cdi);
+  if(document.activeElement!==$("kIpca")) $("kIpca").value=nf(S.ipca);
+  if(document.activeElement!==$("kCus")) $("kCus").value=nf(K.cus);
+  document.querySelectorAll("#kPrazos .chip").forEach(c=>c.setAttribute("aria-pressed",String(toISO(addMonths(parseISO(K.ini),+c.dataset.m))===K.fim)));
+  kSave();
+  const ini=parseISO(K.ini), fim=parseISO(K.fim), C=K.cap, cdi=S.cdi/100, ipca=S.ipca/100;
+  const r=simCalc(C, K.isento?"isento":"trib", K.idx, K.rate[K.idx]/100, ini, fim, cdi, ipca);
+  const clear=msg=>{ $("kWarn").hidden=false; $("kWarn").textContent=msg; ["kX","kR","kT","kA"].forEach(k=>$(k).textContent="—"); ["kXS","kRS","kTS","kAS"].forEach(k=>$(k).textContent=""); $("kBody").innerHTML=""; kLast=null; };
+  if(r.err){ clear(r.err); return; }
+  const F=1+r.gLiq;                                   // fator líquido da renda fixa
+  const T = K.alvo==="real" ? C*Math.pow(1+ipca, r.du/252) : C;   // objetivo no vencimento
+  const X = T/F, Rk = C-X, anos=r.dc/365.25;
+  const prazo = r.dc<365 ? Math.round(r.dc/30.4375)+" meses" : nf(anos,1).replace(",0","")+(anos<1.95?" ano":" anos");
+  const alvoTxt = K.alvo==="real" ? `capital corrigido pelo IPCA (${brl(T)})` : `capital nominal (${brl(C)})`;
+  if(X>C){ clear(`A renda fixa não alcança o objetivo neste prazo: seria preciso aplicar ${brl(X)}, mais que o capital. Aumente o prazo ou a taxa, ou proteja só o capital nominal.`); 
+    $("kX").textContent=brl(X); return; }
+  $("kWarn").hidden=true;
+  $("kX").textContent=brl(X); $("kXS").innerHTML=`<b>${nf(X/C*100,1)}%</b> do capital · ${PROD[K.idx]} ${fmtRate(K.idx,K.rate[K.idx]/100)} ${K.isento?"isento":"tributado"}`;
+  $("kR").textContent=brl(Rk); $("kRS").innerHTML=`<b>${nf(Rk/C*100,1)}%</b> do capital · pode ir a zero sem perda do objetivo`;
+  $("kT").textContent=brl(T); $("kTS").textContent=`${K.alvo==="real"?"capital + IPCA":"igual ao capital"} em ${fmtDate(fim)} · ${prazo}`;
+  $("kA").innerHTML=nf(r.aa252*100)+"%<small>a.a.</small>"; $("kAS").innerHTML = K.isento? `isento · ${r.du} dias úteis` : `após IR de ${irLbl(r.ir)} · ${r.du} dias úteis`;
+  $("kBarRF").style.width=(X/C*100)+"%"; $("kBarRK").style.width=(Rk/C*100)+"%";
+  $("kLegRF").textContent=nf(X/C*100,1)+"% · "+brl(X); $("kLegRK").textContent=nf(Rk/C*100,1)+"% · "+brl(Rk);
+  // cenários
+  const full=C*F;   // 100% na renda fixa
+  const sc=[...new Set([...KSC,K.cus])].sort((a,b)=>a-b);
+  const rows=sc.map(s=>{ const vr=Rk*(1+s/100), tot=X*F+vr, res=tot-C, aa=Math.pow(Math.max(tot,0)/C,1/anos)-1; return {s,vr,rf:X*F,tot,res,aa,vs:tot-full,cus:s===K.cus}; });
+  $("kBody").innerHTML=rows.map(o=>`<tr class="${o.cus?"cus":""}${o.s===0&&!o.cus?" zero":""}"><td>${o.s>0?"+":""}${nf(o.s,0)}%${o.cus?'<span class="tagc">seu cenário</span>':""}${o.s===-100?' <span style="color:var(--fg-3)">(perda total)</span>':""}</td>
+    <td class="num">${brl(o.vr)}</td><td class="num">${brl(o.rf)}</td><td class="num"><b>${brl(o.tot)}</b></td>
+    <td class="num ${o.res>=-0.005?"pos":"neg"}">${o.res>=0?"+ ":"− "}${brl(Math.abs(o.res))}</td><td class="num">${nf(o.aa*100)}%</td>
+    <td class="num ${o.vs>=0?"pos":"neg"}">${o.vs>=0?"+ ":"− "}${brl(Math.abs(o.vs))}</td></tr>`).join("");
+  $("kScSub").textContent=`Capital de ${brl(C)} · prazo de ${prazo} · retorno do ativo de risco já líquido de impostos e custos · comparação com aplicar 100% na renda fixa (${brl(full)})`;
+  // break-even: retorno do risco para empatar com 100% RF
+  const be = Rk>0 ? ((full - X*F)/Rk - 1)*100 : NaN;
+  $("kNote").innerHTML=`<span><b>Para empatar com 100% na renda fixa,</b> o ativo de risco precisa render <b>${isFinite(be)?nf(be,1)+"%":"—"}</b> no período. A proteção vale se a renda fixa for mantida até o vencimento e depende do emissor (com cobertura do FGC, quando aplicável).${K.idx!=="pre"?` Como a renda fixa escolhida é pós-fixada, o valor no vencimento é projetado com CDI de ${nf(S.cdi)}% e IPCA de ${nf(S.ipca)}% a.a. e pode variar.`:""}${K.alvo==="real"?` O objetivo usa IPCA projetado de ${nf(S.ipca)}% a.a.`:""}</span>`;
+  kLast={C,X,Rk,T,F,full,rows,fim,prazo,alvoTxt,be,r};
+}
+document.querySelectorAll("#kIdx button").forEach(b=>b.addEventListener("click",()=>{ K.idx=b.dataset.v; protRender(); }));
+document.querySelectorAll("#kIse button").forEach(b=>b.addEventListener("click",()=>{ K.isento=b.dataset.v==="isento"; protRender(); }));
+document.querySelectorAll("#kAlvo button").forEach(b=>b.addEventListener("click",()=>{ K.alvo=b.dataset.v; protRender(); }));
+document.querySelectorAll("#kPrazos .chip").forEach(c=>c.addEventListener("click",()=>{ K.fim=toISO(addMonths(parseISO(K.ini),+c.dataset.m)); protRender(); }));
+$("kCap").addEventListener("input",e=>{ const v=parseInt(String(e.target.value).replace(/\D/g,""),10); K.cap=isFinite(v)?v:0; protRender(); });
+$("kCap").addEventListener("blur",()=>{ $("kCap").value=K.cap.toLocaleString("pt-BR"); });
+$("kIni").addEventListener("change",e=>{ if(e.target.value){ K.ini=e.target.value; protRender(); } });
+$("kFim").addEventListener("change",e=>{ if(e.target.value){ K.fim=e.target.value; protRender(); } });
+$("kRate").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)){ K.rate[K.idx]=v; protRender(); } });
+$("kRate").addEventListener("blur",()=>{ $("kRate").value=nf(K.rate[K.idx]); });
+$("kCus").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)&&v>=-100){ K.cus=v; protRender(); } });
+$("kCus").addEventListener("blur",()=>{ $("kCus").value=nf(K.cus); });
+$("kCdi").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)&&v>0){ S.cdi=v; S.manual=true; syncAll(); } });
+$("kIpca").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)){ S.ipca=v; S.manual=true; syncAll(); } });
+["kCdi","kIpca"].forEach(k=>$(k).addEventListener("blur",()=>{ $(k).value=nf(k==="kCdi"?S.cdi:S.ipca); }));
+$("kCopy").addEventListener("click",()=>{ if(!kLast) return; const o=kLast;
+  copyText(`Capital protegido · ${brl(o.C)} por ${o.prazo} (até ${fmtDate(o.fim)}).\n`+
+    `Renda fixa: ${brl(o.X)} (${nf(o.X/o.C*100,1)}%) em ${PROD[K.idx]} ${fmtRate(K.idx,K.rate[K.idx]/100)} ${K.isento?"isento":"tributado"}, que vira ${brl(o.T)} líquido no vencimento e protege o ${o.alvoTxt}.\n`+
+    `Ativo de risco: ${brl(o.Rk)} (${nf(o.Rk/o.C*100,1)}%). Se for a zero, o objetivo está preservado. Para empatar com 100% na renda fixa, o risco precisa render ${nf(o.be,1)}% no período.\n`+
+    `Projeções: CDI ${nf(S.cdi)}%, IPCA ${nf(S.ipca)}% a.a. Não constitui recomendação de investimento.`,"kCopied","Resumo copiado"); });
+$("kCopyT").addEventListener("click",()=>{ if(!kLast) return;
+  const head=["Ativo de risco","Valor do risco","Renda fixa","Total no vencimento","Resultado","a.a.","vs. 100% RF"].join("\t");
+  copyText([head,...kLast.rows.map(o=>[nf(o.s,0)+"%",nf(o.vr),nf(o.rf),nf(o.tot),nf(o.res),nf(o.aa*100)+"%",nf(o.vs)].join("\t"))].join("\n"),"kCopiedT","Tabela copiada"); });
+
 /* =================== ABAS =================== */
-const TABS={gross:{h:'Gross-up isento × tributável'}, sim:{h:'Simulador de aplicação'}, eq:{h:'Equivalência de taxas'}, cmp:{h:'Comparador de aplicações'}, cart:{h:'Carteira e escada de vencimentos'}};
+const TABS={gross:{h:'Gross-up isento × tributável'}, sim:{h:'Simulador de aplicação'}, eq:{h:'Equivalência de taxas'}, cmp:{h:'Comparador de aplicações'}, cart:{h:'Carteira e escada de vencimentos'}, prot:{h:'Capital protegido'}};
 function showTab(k){
   if(!TABS[k]) k="sim";
   document.querySelectorAll(".tab[data-tab]").forEach(t=>t.setAttribute("aria-selected",String(t.dataset.tab===k)));
@@ -1882,7 +2061,7 @@ function showTab(k){
 }
 document.querySelectorAll(".tab[data-tab]").forEach(t=>t.addEventListener("click",()=>showTab(t.dataset.tab)));
 let startTab="sim";
-if(location.hash==="#simulador") startTab="sim"; if(location.hash==="#equivalencia") startTab="eq"; if(location.hash==="#comparador") startTab="cmp"; if(location.hash==="#carteira") startTab="cart"; if(location.hash==="#grossup") startTab="gross";
+if(location.hash==="#simulador") startTab="sim"; if(location.hash==="#equivalencia") startTab="eq"; if(location.hash==="#comparador") startTab="cmp"; if(location.hash==="#carteira") startTab="cart"; if(location.hash==="#protegido") startTab="prot"; if(location.hash==="#grossup") startTab="gross";
 /* =================== INDICADORES OFICIAIS (indicadores.json) =================== */
 let IND=null;
 const mesAno = s => { if(!s) return ""; const [d,m,y]=s.split("/"); return ["jan","fev","mar","abr","mai","jun","jul","ago","set","out","nov","dez"][+m-1]+"/"+String(y).slice(2); };
@@ -1913,7 +2092,7 @@ fetch("indicadores.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=
 document.addEventListener("keydown",e=>{
   if(e.altKey||e.ctrlKey||e.metaKey) return;
   const tg=e.target; if(tg&&(tg.tagName==="INPUT"||tg.tagName==="TEXTAREA"||tg.isContentEditable)) return;
-  const k={"1":"sim","2":"cmp","3":"cart","4":"gross","5":"eq"}[e.key]; if(k){ showTab(k); }
+  const k={"1":"sim","2":"cmp","3":"cart","4":"prot","5":"gross","6":"eq"}[e.key]; if(k){ showTab(k); }
 });
 showTab(startTab);
 
