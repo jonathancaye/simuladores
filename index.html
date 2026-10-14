@@ -425,6 +425,44 @@ select.ci{font-family:var(--f-num);padding:2px 3px}
 .ktab tr.zero td{border-top:1px solid var(--fg-3)}
 .ktab td.pos{color:var(--teal-ink)} .ktab td.neg{color:var(--orange)}
 .ktab .tagc{font:700 9.5px var(--f-num);letter-spacing:.05em;text-transform:uppercase;color:var(--orange);margin-left:6px}
+/* ===== Cenários ===== */
+.scwin{display:flex;flex-wrap:wrap;gap:6px 10px;margin:0 0 8px}
+.scwin .sw{display:flex;gap:6px;align-items:baseline;border:1px solid var(--line);border-radius:2px;padding:4px 8px;font:11.5px var(--f-num);color:var(--fg-2)}
+.scwin .sw b{color:var(--teal-ink)}
+.scwin .sw i{font-style:normal;font-weight:700;text-transform:uppercase;letter-spacing:.06em;font-size:10px;color:var(--fg-3)}
+.smx{min-width:760px}
+.smx th,.smx td{white-space:nowrap;padding:5px 8px}
+.smx th{text-align:right}
+.smx th:first-child,.smx td:first-child{text-align:left}
+.smx thead tr.g th{text-align:center;border-bottom:1px solid var(--line);color:var(--fg)}
+.smx thead tr.g th.sq{color:var(--fg-2)}
+.smx thead tr.g th small{display:block;font:400 10px var(--f-num);letter-spacing:0;text-transform:none;color:var(--fg-3);margin-top:2px}
+.smx td.num{text-align:right}
+.smx td.w{background:var(--teal-soft)!important;color:var(--teal-ink);font-weight:700}
+.smx td.bl,.smx th.bl{border-left:1px solid var(--line)}
+.smx td.amp{color:var(--fg-2)}
+.sc-cols{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:14px;margin-top:12px}
+@media (max-width:1000px){.sc-cols{grid-template-columns:minmax(0,1fr)}}
+.sc-t{font:600 10.5px var(--f-num);letter-spacing:.08em;text-transform:uppercase;color:var(--fg-2);margin-bottom:6px}
+.sc-t em{font-style:normal;font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg-3);margin-left:6px}
+.sc-be{display:flex;flex-direction:column;gap:6px}
+.sc-be .be{border-left:3px solid var(--teal);background:var(--surface-2);padding:6px 10px;font-size:12px;line-height:1.45}
+.sc-be .be b{font-family:var(--f-num)}
+.sc-be .be small{display:block;color:var(--fg-3);font:11px var(--f-num);margin-top:2px}
+.sc-ed{margin-top:12px;border-top:1px solid var(--line);padding-top:8px}
+.sc-ed summary{cursor:pointer;font:600 10.5px var(--f-num);letter-spacing:.08em;text-transform:uppercase;color:var(--fg-2)}
+.sc-ed summary em{font-style:normal;font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg-3);margin-left:6px}
+.sc-shock{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;margin:8px 0}
+.sc-shock label{display:flex;align-items:center;gap:6px;font:600 10px var(--f-num);letter-spacing:.06em;text-transform:uppercase;color:var(--fg-2)}
+.sc-shock .inrow{width:110px}
+.sed{min-width:560px}
+.sed th,.sed td{padding:3px 5px;white-space:nowrap}
+.sed th{text-align:center}
+.sed th:first-child,.sed td:first-child{text-align:left}
+.sed td.lb{text-align:left;font:600 10.5px var(--f-num);color:var(--fg-2);text-transform:uppercase;letter-spacing:.05em}
+.sed .ci{width:66px;text-align:right}
+.sed .ci.ov{border-color:var(--orange);background:var(--orange-soft)}
+.sed tr.grp td{border-top:1px solid var(--fg-3)}
 footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);font:11px/1.5 var(--f-ui);color:var(--fg-3)}
 @media (max-width:880px){.grid{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:560px){.hcol.rate{padding-left:0;border-left:0}}
@@ -544,6 +582,41 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
         </div>
         <div class="notice" id="cNote" style="margin-top:10px"></div>
         <div class="warnbox" id="cWarn" hidden></div>
+      </div>
+      <div class="card" id="scCard">
+        <div class="card-head">
+          <div><h2>Cenários de juros e inflação</h2><div class="alloc" id="scSub">—</div></div>
+          <div class="actions"><button type="button" class="btn ghost" id="scCopy">Copiar matriz</button><span class="copied" id="scCopied" hidden></span></div>
+        </div>
+        <div class="scwin" id="scWin"></div>
+        <div class="tbl-wrap">
+          <table class="smx">
+            <thead id="scHead"></thead>
+            <tbody id="scBody"></tbody>
+          </table>
+        </div>
+        <div class="sc-cols">
+          <div>
+            <div class="sc-t">Faixa de resultado por opção <em>taxa líquida a.a. · Q = queda · N = neutro · A = alta</em></div>
+            <div class="chart-box" id="scChartBox"><svg id="scChart" role="img" aria-label="Faixa de resultado por cenário"></svg></div>
+          </div>
+          <div>
+            <div class="sc-t">Pontos de empate com o Pré</div>
+            <div id="scBE" class="sc-be"></div>
+          </div>
+        </div>
+        <details class="sc-ed" id="scEd" open>
+          <summary>Premissas dos cenários <em id="scSrc">—</em></summary>
+          <div class="sc-shock">
+            <label>Choque no CDI <span class="inrow sm"><span class="unit">±</span><input id="scShC" inputmode="decimal"><span class="unit">p.p.</span></span></label>
+            <label>Choque no IPCA <span class="inrow sm"><span class="unit">±</span><input id="scShI" inputmode="decimal"><span class="unit">p.p.</span></span></label>
+            <button type="button" class="btn ghost" id="scReset">Restaurar Focus</button>
+          </div>
+          <div class="tbl-wrap">
+            <table class="sed"><thead id="scEdH"></thead><tbody id="scEdB"></tbody></table>
+          </div>
+          <p class="hint">CDI de fim de ano = Selic do Focus − 0,10 p.p. Entre os pontos, o CDI muda de forma gradual a partir do CDI atual (<span id="scHoje">—</span>). IPCA aplicado ano a ano. Queda e alta = neutro ∓ choque. Células editadas ficam marcadas em laranja.</p>
+        </details>
       </div>
     </section>
   </div>
@@ -1691,6 +1764,7 @@ function cmpRender(){
   $("cWinV").textContent=cName(best);
   $("cWinS").innerHTML = `<b>${brl(V+R[best].liq)}</b> líquido · ${nf(R[best].am*100,3)}% a.m.` + (multi ? ` · <b>+ ${brl(R[best].liq-R[second].liq)}</b> sobre a 2ª opção (${cName(second)})` : "");
   cLast={R,best,V,ini,fim,A};
+  scenRender(A,ini,fim,V,R);
 }
 CK.forEach(k=>{
   $("c_"+k).addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)){ C.rate[k]=v; cmpRender(); } });
@@ -2050,6 +2124,121 @@ $("kCopy").addEventListener("click",()=>{ if(!kLast) return; const o=kLast;
 $("kCopyT").addEventListener("click",()=>{ if(!kLast) return;
   const head=["Ativo de risco","Valor do risco","Renda fixa","Total no vencimento","Resultado","a.a.","vs. 100% RF"].join("\t");
   copyText([head,...kLast.rows.map(o=>[nf(o.s,0)+"%",nf(o.vr),nf(o.rf),nf(o.tot),nf(o.res),nf(o.aa*100)+"%",nf(o.vs)].join("\t"))].join("\n"),"kCopiedT","Tabela copiada"); });
+
+/* =================== CENÁRIOS (Comparador) =================== */
+const SCN=["queda","neutro","alta"], SCL={queda:"Queda",neutro:"Neutro",alta:"Alta"};
+const Y0=new Date(today).getUTCFullYear(), YS=[0,1,2,3,4].map(i=>Y0+i);
+C.sc=Object.assign({shC:2,shI:1,ov:{}}, C.sc||{});
+SCN.forEach(s=>{ C.sc.ov[s]=C.sc.ov[s]||{cdi:{},ipca:{}}; });
+function scenBase(){
+  const fa=IND&&IND.focus_anual;
+  return { cdi: YS.map(y=> fa&&fa.selic&&isFinite(fa.selic[y]) ? fa.selic[y]-0.10 : S.cdi),
+           ipca: YS.map(y=> fa&&fa.ipca&&isFinite(fa.ipca[y]) ? fa.ipca[y] : S.ipca) };
+}
+function scenPaths(){
+  const b=scenBase(), ov=C.sc.ov, out={};
+  const ap=(s,k,arr)=>arr.map((v,i)=>{ const o=ov[s][k][YS[i]]; return isFinite(o)?o:v; });
+  out.neutro={cdi:ap("neutro","cdi",b.cdi), ipca:ap("neutro","ipca",b.ipca)};
+  out.queda ={cdi:ap("queda","cdi",out.neutro.cdi.map(v=>Math.max(0,v-C.sc.shC))), ipca:ap("queda","ipca",out.neutro.ipca.map(v=>v-C.sc.shI))};
+  out.alta  ={cdi:ap("alta","cdi",out.neutro.cdi.map(v=>v+C.sc.shC)), ipca:ap("alta","ipca",out.neutro.ipca.map(v=>v+C.sc.shI))};
+  return out;
+}
+// CDI do dia: interpolação linear entre hoje (CDI atual) e os fins de ano; constante depois do último ponto
+function makeCdiAt(path){
+  const kn=[[today,S.cdi], ...YS.map((y,i)=>[Date.UTC(y,11,31),path.cdi[i]])];
+  return t=>{ if(t<=kn[0][0]) return kn[0][1]; for(let i=1;i<kn.length;i++){ if(t<=kn[i][0]){ const [t0,v0]=kn[i-1],[t1,v1]=kn[i]; return v0+(v1-v0)*(t-t0)/(t1-t0); } } return kn[kn.length-1][1]; };
+}
+const makeIpcaAt=path=>t=>{ const y=new Date(t).getUTCFullYear(); const i=Math.max(0,Math.min(YS.length-1,y-Y0)); return path.ipca[i]; };
+function scenCalc(V,tipo,idx,x,ini,fim,path){
+  if(idx==="pre") return simCalc(V,tipo,idx,x,ini,fim,S.cdi/100,S.ipca/100);
+  const dc=Math.round((fim-ini)/DAY); if(!(dc>0)) return {err:"datas"};
+  const cdiAt=makeCdiAt(path), ipcaAt=makeIpcaAt(path);
+  let F=1, du=0, Fc=1, Fi=1;
+  for(let t=ini;t<fim;t+=DAY){ if(!isBiz(t)) continue; du++;
+    const dc_=Math.pow(1+cdiAt(t)/100,1/252)-1, di=Math.pow(1+ipcaAt(t)/100,1/252)-1;
+    Fc*=1+dc_; Fi*=1+di;
+    if(idx==="pct") F*=1+x*dc_;
+    else if(idx==="cdip") F*=(1+dc_)*Math.pow(1+x,1/252);
+    else if(idx==="ipca") F*=(1+di)*Math.pow(1+x,1/252);
+  }
+  if(du<1) return {err:"datas"};
+  const bruto=V*(F-1), iof=tipo==="trib"?bruto*iofRate(dc):0, ir=tipo==="trib"?irRate(dc):0, irv=(bruto-iof)*ir, liq=bruto-iof-irv;
+  const gLiq=liq/V; return {dc,du,bruto,iof,ir,irv,liq,gLiq,aa252:Math.pow(1+gLiq,252/du)-1,
+    cdiMed:Math.pow(Fc,252/du)-1, ipcaMed:Math.pow(Fi,252/du)-1};
+}
+// empate: taxa constante do indexador que iguala o resultado líquido da opção ao do Pré
+function breakeven(k,ini,fim,V,target){
+  const tipo=C.isento[k]?"isento":"trib", x=C.rate[k]/100;
+  const f=c=>{ const r= k==="ipca" ? simCalc(V,tipo,k,x,ini,fim,S.cdi/100,c) : simCalc(V,tipo,k,x,ini,fim,c,S.ipca/100); return r.err?NaN:r.liq-target; };
+  let lo= k==="ipca"?-0.10:0.0001, hi=0.60; if(!(f(lo)<0&&f(hi)>0)) return NaN;
+  for(let i=0;i<60;i++){ const m=(lo+hi)/2; (f(m)<0?lo=m:hi=m); } return (lo+hi)/2;
+}
+let scLast=null;
+function scenRender(A,ini,fim,V,R0){
+  const paths=scenPaths();
+  // editor (estrutura uma vez; valores sem atrapalhar o campo em edição)
+  if(!$("scEdB").children.length){
+    $("scEdH").innerHTML=`<tr><th>Cenário</th><th>Indicador</th>${YS.map(y=>`<th>${y}</th>`).join("")}</tr>`;
+    $("scEdB").innerHTML=["cdi","ipca"].map(k=>SCN.map((s,j)=>`<tr class="${j===0?"grp":""}"><td class="lb">${SCL[s]}</td><td class="lb">${k==="cdi"?"CDI fim de ano":"IPCA do ano"}</td>${YS.map(y=>`<td><input class="ci" inputmode="decimal" data-s="${s}" data-k="${k}" data-y="${y}" aria-label="${k} ${s} ${y}"></td>`).join("")}</tr>`).join("")).join("");
+  }
+  $("scEdB").querySelectorAll("input").forEach(inp=>{ const {s,k,y}=inp.dataset, i=YS.indexOf(+y);
+    inp.classList.toggle("ov",isFinite(C.sc.ov[s][k][y]));
+    if(document.activeElement!==inp) inp.value=nf(paths[s][k][i]); });
+  if(document.activeElement!==$("scShC")) $("scShC").value=nf(C.sc.shC);
+  if(document.activeElement!==$("scShI")) $("scShI").value=nf(C.sc.shI);
+  const fa=IND&&IND.focus_anual;
+  $("scSrc").textContent = fa&&fa.selic ? `neutro do Focus de ${isoDM(fa.data||"")}` : "Focus anual indisponível: neutro = CDI e IPCA constantes";
+  $("scHoje").textContent=`${nf(S.cdi)}% hoje`;
+  // cálculo
+  const res={}; SCN.forEach(s=>{ res[s]={}; A.forEach(k=>{ res[s][k]=scenCalc(V,C.isento[k]?"isento":"trib",k,C.rate[k]/100,ini,fim,paths[s]); }); });
+  const any=A.find(k=>k!=="pre");
+  const med=s=>{ const r=any&&res[s][any]; return r&&!r.err ? `CDI ${nf(r.cdiMed*100,1)}% · IPCA ${nf(r.ipcaMed*100,1)}%` : ""; };
+  const best={}; SCN.forEach(s=>{ best[s]=A.reduce((a,b)=>res[s][b].liq>res[s][a].liq?b:a); });
+  $("scSub").textContent=`Trajetórias de CDI e IPCA ano a ano até ${fmtDate(fim)} · o Pré é igual nos três cenários`;
+  $("scWin").innerHTML=SCN.map(s=>`<span class="sw"><i>${SCL[s]}</i> melhor: <b>${cName(best[s])}</b></span>`).join("");
+  $("scHead").innerHTML=`<tr class="g"><th></th>${SCN.map(s=>`<th colspan="2" class="bl${s!=="neutro"?" sq":""}">${SCL[s]}<small>${med(s)}</small></th>`).join("")}<th class="bl">Amplitude</th></tr>
+    <tr><th>Opção</th>${SCN.map(()=>`<th class="bl">Líquido no venc.</th><th>a.a.</th>`).join("")}<th class="bl">Alta − Queda</th></tr>`;
+  $("scBody").innerHTML=A.map(k=>`<tr><td>${cName(k)}</td>${SCN.map(s=>{ const r=res[s][k]; const w=best[s]===k&&A.length>1?" w":""; return `<td class="num bl${w}">${brl(V+r.liq)}</td><td class="num${w}">${nf(r.aa252*100)}%</td>`; }).join("")}<td class="num bl amp">${k==="pre"?"travado":"± "+brl(Math.abs(res.alta[k].liq-res.queda[k].liq)/2)}</td></tr>`).join("");
+  // pontos de empate
+  if(A.includes("pre")){
+    const tgt=R0.pre.liq, items=A.filter(k=>k!=="pre").map(k=>{ const be=breakeven(k,ini,fim,V,tgt); const lbl=k==="ipca"?"IPCA":"CDI";
+      const sc=SCN.map(s=>`${SCL[s].toLowerCase()} ${nf((k==="ipca"?res[s][k].ipcaMed:res[s][k].cdiMed)*100,1)}%`).join(" · ");
+      return `<div class="be">${cName("pre")} ganha de <b>${cName(k)}</b> se o ${lbl} médio do período ficar abaixo de <b>${isFinite(be)?nf(be*100,2)+"% a.a.":"—"}</b><small>${lbl} médio nos cenários: ${sc}</small></div>`; });
+    $("scBE").innerHTML = items.join("") || `<div class="be">Inclua uma opção pós-fixada para ver os pontos de empate.</div>`;
+  } else $("scBE").innerHTML=`<div class="be">Inclua o Pré na comparação para ver os pontos de empate.</div>`;
+  scLast={A,res,V,paths,best};
+  drawScen();
+}
+function drawScen(){
+  if(!scLast) return; const {A,res}=scLast, svg=$("scChart"), box=$("scChartBox");
+  const W=Math.max(280,box.clientWidth), rowH=34, Pd={l:Math.min(178,W*0.42),r:16,t:8,b:26}, H=Pd.t+Pd.b+rowH*A.length;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const vals=A.flatMap(k=>SCN.map(s=>res[s][k].aa252*100)); let lo=Math.min(...vals), hi=Math.max(...vals);
+  const pad=Math.max(0.3,(hi-lo)*0.12); const ticks=niceTicks(lo-pad,hi+pad,5); lo=ticks[0]; hi=ticks[ticks.length-1];
+  const X=v=>Pd.l+(v-lo)/(hi-lo)*(W-Pd.l-Pd.r);
+  let s="";
+  ticks.forEach(v=>{ s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${Pd.t}" y2="${H-Pd.b}" stroke="var(--line)"/><text class="ax" x="${X(v)}" y="${H-Pd.b+16}" text-anchor="middle">${nf(v,(ticks[1]-ticks[0])<1?1:0)}%</text>`; });
+  A.forEach((k,i)=>{ const y=Pd.t+rowH*(i+.5), q=res.queda[k].aa252*100, n=res.neutro[k].aa252*100, a=res.alta[k].aa252*100;
+    s+=`<text x="${Pd.l-10}" y="${y+4}" text-anchor="end" style="font:500 11px var(--f-num);fill:var(--fg)">${(k==="pre"?"Pré ":"")+fmtRate(k,C.rate[k]/100)+(C.isento[k]?" isento":"")}</text>`;
+    if(k!=="pre"){ s+=`<line x1="${X(Math.min(q,a))}" x2="${X(Math.max(q,a))}" y1="${y}" y2="${y}" stroke="var(--fg-3)" stroke-width="2"/>`;
+      [[q,"Q"],[a,"A"]].forEach(([v,l])=>{ s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${y-6}" y2="${y+6}" stroke="var(--fg-2)" stroke-width="2"/><text class="ax" x="${X(v)}" y="${y-9}" text-anchor="middle">${l}</text>`; }); }
+    s+=`<circle cx="${X(n)}" cy="${y}" r="5.5" fill="${k==="pre"?"var(--orange)":"var(--teal)"}" stroke="var(--surface)" stroke-width="2"><title>${cName(k)} · queda ${nf(q)}% · neutro ${nf(n)}% · alta ${nf(a)}%</title></circle>`;
+  });
+  svg.innerHTML=s;
+}
+try{ let t; new ResizeObserver(()=>{ clearTimeout(t); t=setTimeout(drawScen,60); }).observe($("scChartBox")); }catch(e){}
+$("scEdB").addEventListener("input",e=>{ const el=e.target; if(!el.dataset.s) return; const v=parseNum(el.value); if(!isFinite(v)) return;
+  C.sc.ov[el.dataset.s][el.dataset.k][el.dataset.y]=v; cmpRender(); });
+$("scEdB").addEventListener("focusout",()=>cmpRender());
+$("scShC").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)&&v>=0){ C.sc.shC=v; cmpRender(); } });
+$("scShI").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)&&v>=0){ C.sc.shI=v; cmpRender(); } });
+["scShC","scShI"].forEach(k=>$(k).addEventListener("blur",()=>{ $(k).value=nf(k==="scShC"?C.sc.shC:C.sc.shI); }));
+$("scReset").addEventListener("click",()=>{ SCN.forEach(s=>{ C.sc.ov[s]={cdi:{},ipca:{}}; }); C.sc.shC=2; C.sc.shI=1; cmpRender(); });
+$("scCopy").addEventListener("click",()=>{ if(!scLast) return; const {A,res,V}=scLast;
+  const head=["Opção",...SCN.flatMap(s=>[SCL[s]+" líquido",SCL[s]+" a.a."])].join("\t");
+  const L=A.map(k=>[cName(k),...SCN.flatMap(s=>[nf(V+res[s][k].liq),nf(res[s][k].aa252*100)+"%"])].join("\t"));
+  const P=["CDI fim de ano","IPCA do ano"].map((lbl,j)=>SCN.map(s=>`${SCL[s]} ${lbl}: `+YS.map((y,i)=>`${y} ${nf(scLast.paths[s][j?"ipca":"cdi"][i])}%`).join(" · ")).join("\n")).join("\n");
+  copyText([head,...L].join("\n")+"\n\nPremissas\n"+P,"scCopied","Matriz copiada"); });
 
 /* =================== ABAS =================== */
 const TABS={gross:{h:'Gross-up isento × tributável'}, sim:{h:'Simulador de aplicação'}, eq:{h:'Equivalência de taxas'}, cmp:{h:'Comparador de aplicações'}, cart:{h:'Carteira e escada de vencimentos'}, prot:{h:'Capital protegido'}};
