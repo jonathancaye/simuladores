@@ -101,6 +101,27 @@ def main():
     tenta("selic_focus", selic)
     tenta("ipca_focus_12m", ipca_focus)
 
+    def focus_anual():
+        """Medianas do Focus para o ano corrente e os 4 seguintes (Selic de fim de ano e IPCA do ano)."""
+        anos = [str(ano + i) for i in range(5)]
+        out = {"data": None}
+        for ind, chave in (("Selic", "selic"), ("IPCA", "ipca")):
+            qs = "&".join(k + "=" + urllib.parse.quote(v, safe=",") for k, v in [
+                ("$top", "2000"), ("$filter", f"Indicador eq '{ind}'"), ("$orderby", "Data desc"), ("$format", "json")])
+            linhas = get_json(OLINDA + "ExpectativasMercadoAnuais?" + qs)["value"]
+            serie = {}
+            for d in linhas:  # já vem do mais recente para o mais antigo
+                ref = str(d.get("DataReferencia"))
+                if ref in anos and ref not in serie and d.get("baseCalculo") in (0, "0") and d.get("Mediana") is not None:
+                    serie[ref] = round(float(d["Mediana"]), 4)
+                    out["data"] = max(out["data"] or "", d["Data"])
+            if not serie:
+                raise ValueError(f"Focus anual sem dados de {ind}")
+            out[chave] = serie
+        return out
+
+    tenta("focus_anual", focus_anual)
+
     # registra as falhas no próprio arquivo para facilitar o diagnóstico
     if erros:
         novo["erros"] = erros
@@ -112,7 +133,7 @@ def main():
     print(json.dumps(novo, ensure_ascii=False, indent=2))
     if erros:
         print("Falhas (valores anteriores mantidos):", *erros, sep="\n- ")
-    if len(erros) == 4:
+    if len(erros) >= 5:
         raise SystemExit(1)
 
 
