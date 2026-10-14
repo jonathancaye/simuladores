@@ -463,6 +463,24 @@ select.ci{font-family:var(--f-num);padding:2px 3px}
 .sed .ci{width:66px;text-align:right}
 .sed .ci.ov{border-color:var(--orange);background:var(--orange-soft)}
 .sed tr.grp td{border-top:1px solid var(--fg-3)}
+/* ===== Comparador unificado ===== */
+.hsc{display:flex;flex-wrap:wrap;gap:6px 18px}
+.hsc .hs{display:inline-flex;gap:6px;align-items:baseline}
+.hsc .hs i{font-style:normal;font:700 9.5px var(--f-num);letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7)}
+.scn-sum{font:11px/1.6 var(--f-num);color:var(--fg-2);background:var(--surface);border:1px solid var(--side-line);border-radius:2px;padding:6px 8px;overflow-x:auto;white-space:nowrap}
+.scn-sum b{color:var(--fg);font-weight:600}
+.scn-sum .nt{width:100%;border-collapse:collapse}
+.scn-sum .nt td{padding:1px 3px;text-align:right;border:0;background:transparent!important;font:11px var(--f-num)}
+.scn-sum .nt td:first-child{text-align:left;color:var(--fg-2)}
+.scn-sum .yr{color:var(--fg-3)}
+.cmp tr.gh td{background:var(--surface-2)!important;font:600 10px var(--f-num);letter-spacing:.08em;text-transform:uppercase;color:var(--fg-2);padding-top:6px;padding-bottom:6px}
+.cmp tr.gh td small{font-weight:400;letter-spacing:0;text-transform:none;color:var(--fg-3);margin-left:6px}
+.cmp td .sl{display:block;font:400 10.5px var(--f-num);color:var(--fg-3);margin-top:1px}
+.cmp td.win .sl{color:var(--teal-ink)}
+.cmp tr.scn td:first-child b{font:600 11px var(--f-num);letter-spacing:.06em;text-transform:uppercase;color:var(--fg)}
+.cmp tr.scn.neu td{border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.cmp tr.tog td{padding:4px 8px;background:transparent!important}
+.cmp td.lock{color:var(--fg-3);font:11px var(--f-num)}
 footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);font:11px/1.5 var(--f-ui);color:var(--fg-3)}
 @media (max-width:880px){.grid{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:560px){.hcol.rate{padding-left:0;border-left:0}}
@@ -519,22 +537,24 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
         <label class="lbl" for="cValor">Valor aplicado</label>
         <div class="inrow sm"><span class="unit">R$</span><input id="cValor" inputmode="numeric"></div>
       </div>
-      <div class="sep"></div>
-      <div class="two">
-        <div class="field"><label class="lbl" for="cCdi">CDI proj.</label><div class="inrow sm"><input id="cCdi" inputmode="decimal"><span class="unit">% a.a.</span></div></div>
-        <div class="field"><label class="lbl" for="cIpca">IPCA proj.</label><div class="inrow sm"><input id="cIpca" inputmode="decimal"><span class="unit">% a.a.</span></div></div>
-      </div>
       <div class="meta" style="border-top:0;padding-top:0">
         <span>Dias úteis<b id="cDU">—</b></span>
         <span>Corridos<b id="cDC">—</b></span>
       </div>
+      <div class="ph sub">Cenários<em id="scSrc">—</em></div>
+      <div class="two">
+        <div class="field"><label class="lbl" for="scShC">Choque CDI</label><div class="inrow sm"><span class="unit">±</span><input id="scShC" inputmode="decimal"><span class="unit">p.p.</span></div></div>
+        <div class="field"><label class="lbl" for="scShI">Choque IPCA</label><div class="inrow sm"><span class="unit">±</span><input id="scShI" inputmode="decimal"><span class="unit">p.p.</span></div></div>
+      </div>
+      <div class="scn-sum" id="scNeu">—</div>
+      <button type="button" class="lnk" id="scEdit" style="align-self:flex-start">Editar premissas ano a ano</button>
     </section>
 
     <section class="results" aria-live="polite">
       <div class="card">
         <div class="card-head win-head" id="cWinner">
           <div class="wh-l">
-            <div class="w-k" id="cWinK">★ Melhor opção no vencimento</div>
+            <div class="w-k" id="cWinK">★ Mais robusta</div>
             <div class="w-v" id="cWinV">—</div>
           </div>
           <div class="actions">
@@ -542,35 +562,35 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
             <button type="button" class="btn inv" id="cCopy">Copiar tabela</button>
             <span class="copied" id="cCopied" hidden></span>
           </div>
-          <div class="w-s" id="cWinS">—</div>
+          <div class="w-s hsc" id="cWinS">—</div>
         </div>
         <div class="tbl-wrap">
           <table class="cmp">
             <colgroup id="cCols"><col class="rlc"><col><col><col><col></colgroup>
             <thead><tr><th class="rl">Valor aplicado <b class="num" id="cValLbl" style="color:var(--fg)">—</b></th>
               <th class="cc" data-k="pre">
-                <div class="cc-name"><span>Prefixado</span><span class="star" hidden>★ melhor</span></div>
+                <div class="cc-name"><span>Prefixado</span><span class="star" hidden>★ robusta</span></div>
                 <div class="inrow xs"><input id="c_pre" inputmode="decimal" autocomplete="off" aria-label="Taxa Prefixado"><span class="unit">% a.a.</span></div>
                 <div class="pills mini" data-k="pre"><button type="button" data-v="trib" aria-pressed="true">Tributado</button><button type="button" data-v="isento" aria-pressed="false">Isento</button></div>
                 <div class="cc-note">Taxa fixa, conhecida na aplicação. Não depende do mercado.</div>
                 <button type="button" class="lnk" data-open="pre">Abrir no simulador</button>
               </th>
               <th class="cc" data-k="pct">
-                <div class="cc-name"><span>% do CDI</span><span class="star" hidden>★ melhor</span></div>
+                <div class="cc-name"><span>% do CDI</span><span class="star" hidden>★ robusta</span></div>
                 <div class="inrow xs"><input id="c_pct" inputmode="decimal" autocomplete="off" aria-label="Taxa % do CDI"><span class="unit">% CDI</span></div>
                 <div class="pills mini" data-k="pct"><button type="button" data-v="trib" aria-pressed="true">Tributado</button><button type="button" data-v="isento" aria-pressed="false">Isento</button></div>
                 <div class="cc-note">Percentual do CDI, acumulado dia a dia (convenção de mercado).</div>
                 <button type="button" class="lnk" data-open="pct">Abrir no simulador</button>
               </th>
               <th class="cc" data-k="cdip">
-                <div class="cc-name"><span>CDI +</span><span class="star" hidden>★ melhor</span></div>
+                <div class="cc-name"><span>CDI +</span><span class="star" hidden>★ robusta</span></div>
                 <div class="inrow xs"><input id="c_cdip" inputmode="decimal" autocomplete="off" aria-label="Taxa CDI +"><span class="unit">% a.a.</span></div>
                 <div class="pills mini" data-k="cdip"><button type="button" data-v="trib" aria-pressed="true">Tributado</button><button type="button" data-v="isento" aria-pressed="false">Isento</button></div>
                 <div class="cc-note">100% do CDI mais um spread fixo, compostos.</div>
                 <button type="button" class="lnk" data-open="cdip">Abrir no simulador</button>
               </th>
               <th class="cc" data-k="ipca">
-                <div class="cc-name"><span>IPCA +</span><span class="star" hidden>★ melhor</span></div>
+                <div class="cc-name"><span>IPCA +</span><span class="star" hidden>★ robusta</span></div>
                 <div class="inrow xs"><input id="c_ipca" inputmode="decimal" autocomplete="off" aria-label="Taxa IPCA +"><span class="unit">% a.a.</span></div>
                 <div class="pills mini" data-k="ipca"><button type="button" data-v="trib" aria-pressed="true">Tributado</button><button type="button" data-v="isento" aria-pressed="false">Isento</button></div>
                 <div class="cc-note">Inflação (IPCA) mais uma taxa real fixa, compostas.</div>
@@ -578,21 +598,6 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
               </th>
             </tr></thead>
             <tbody id="cBody"></tbody>
-          </table>
-        </div>
-        <div class="notice" id="cNote" style="margin-top:10px"></div>
-        <div class="warnbox" id="cWarn" hidden></div>
-      </div>
-      <div class="card" id="scCard">
-        <div class="card-head">
-          <div><h2>Cenários de juros e inflação</h2><div class="alloc" id="scSub">—</div></div>
-          <div class="actions"><button type="button" class="btn ghost" id="scCopy">Copiar matriz</button><span class="copied" id="scCopied" hidden></span></div>
-        </div>
-        <div class="scwin" id="scWin"></div>
-        <div class="tbl-wrap">
-          <table class="smx">
-            <thead id="scHead"></thead>
-            <tbody id="scBody"></tbody>
           </table>
         </div>
         <div class="sc-cols">
@@ -605,13 +610,11 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
             <div id="scBE" class="sc-be"></div>
           </div>
         </div>
-        <details class="sc-ed" id="scEd" open>
-          <summary>Premissas dos cenários <em id="scSrc">—</em></summary>
-          <div class="sc-shock">
-            <label>Choque no CDI <span class="inrow sm"><span class="unit">±</span><input id="scShC" inputmode="decimal"><span class="unit">p.p.</span></span></label>
-            <label>Choque no IPCA <span class="inrow sm"><span class="unit">±</span><input id="scShI" inputmode="decimal"><span class="unit">p.p.</span></span></label>
-            <button type="button" class="btn ghost" id="scReset">Restaurar Focus</button>
-          </div>
+        <div class="notice" id="cNote" style="margin-top:10px"></div>
+        <div class="warnbox" id="cWarn" hidden></div>
+        <details class="sc-ed" id="scEd">
+          <summary>Premissas dos cenários ano a ano <em>editáveis</em></summary>
+          <div class="sc-shock"><button type="button" class="btn ghost" id="scReset">Restaurar Focus e choques padrão</button></div>
           <div class="tbl-wrap">
             <table class="sed"><thead id="scEdH"></thead><tbody id="scEdB"></tbody></table>
           </div>
@@ -1708,23 +1711,78 @@ $("eCopyT").addEventListener("click",()=>{ if(!eLast) return;
   const lines=eLast.rows.map(c=>{ const cd=c/100, r2=eTo(E.idx,eLast.x,cd,eLast.ipca); return [nf(c)+"%",...ORDER.map(k=>fmtRate(k,eFrom(k,r2,cd,eLast.ipca)))].join("\t"); });
   copyText([head,...lines].join("\n"),"eCopiedT","Tabela copiada. Cole no Excel ou no WhatsApp."); });
 
-/* =================== MÓDULO: COMPARADOR =================== */
+/* =================== MÓDULO: COMPARADOR (cenários) =================== */
 const CK=["pre","pct","cdip","ipca"];
-let C={rate:{pre:13,pct:92,cdip:1,ipca:6.5}, isento:{pre:false,pct:true,cdip:false,ipca:false}, on:{pre:true,pct:true,cdip:true,ipca:true}, ini:toISO(today), fim:toISO(addMonths(today,24)), valor:100000};
-try{ const cv=JSON.parse(localStorage.getItem("comparador.v1")||"null"); if(cv&&cv.rate) C=Object.assign(C,cv,{rate:Object.assign(C.rate,cv.rate),isento:Object.assign(C.isento,cv.isento||{}),on:Object.assign(C.on,cv.on||{})}); }catch(e){}
+let C={rate:{pre:13,pct:92,cdip:1,ipca:6.5}, isento:{pre:false,pct:true,cdip:false,ipca:false}, on:{pre:true,pct:true,cdip:true,ipca:true}, ini:toISO(today), fim:toISO(addMonths(today,24)), valor:100000, sc:{shC:2,shI:1,ov:{}}, det:false};
+try{ const cv=JSON.parse(localStorage.getItem("comparador.v1")||"null"); if(cv&&cv.rate) C=Object.assign(C,cv,{rate:Object.assign(C.rate,cv.rate),isento:Object.assign(C.isento,cv.isento||{}),on:Object.assign(C.on,cv.on||{}),sc:Object.assign(C.sc,cv.sc||{})}); }catch(e){}
 const cSave=()=>{ try{ localStorage.setItem("comparador.v1",JSON.stringify(C)); }catch(e){} };
 const cName = k => (k==="pre"?"Pré ":"")+fmtRate(k,C.rate[k]/100)+" · "+(C.isento[k]?"isento":"tributado");
+const SCN=["queda","neutro","alta"], SCL={queda:"Queda",neutro:"Neutro",alta:"Alta"};
+const Y0=new Date(today).getUTCFullYear(), YS=[0,1,2,3,4].map(i=>Y0+i);
+SCN.forEach(s=>{ C.sc.ov[s]=C.sc.ov[s]||{cdi:{},ipca:{}}; });
+function scenBase(){
+  const fa=IND&&IND.focus_anual;
+  return { cdi: YS.map(y=> fa&&fa.selic&&isFinite(fa.selic[y]) ? fa.selic[y]-0.10 : S.cdi),
+           ipca: YS.map(y=> fa&&fa.ipca&&isFinite(fa.ipca[y]) ? fa.ipca[y] : S.ipca) };
+}
+function scenPaths(){
+  const b=scenBase(), ov=C.sc.ov, out={};
+  const ap=(s,k,arr)=>arr.map((v,i)=>{ const o=ov[s][k][YS[i]]; return isFinite(o)?o:v; });
+  out.neutro={cdi:ap("neutro","cdi",b.cdi), ipca:ap("neutro","ipca",b.ipca)};
+  out.queda ={cdi:ap("queda","cdi",out.neutro.cdi.map(v=>Math.max(0,v-C.sc.shC))), ipca:ap("queda","ipca",out.neutro.ipca.map(v=>v-C.sc.shI))};
+  out.alta  ={cdi:ap("alta","cdi",out.neutro.cdi.map(v=>v+C.sc.shC)), ipca:ap("alta","ipca",out.neutro.ipca.map(v=>v+C.sc.shI))};
+  return out;
+}
+function makeCdiAt(path){
+  const kn=[[today,S.cdi], ...YS.map((y,i)=>[Date.UTC(y,11,31),path.cdi[i]])];
+  return t=>{ if(t<=kn[0][0]) return kn[0][1]; for(let i=1;i<kn.length;i++){ if(t<=kn[i][0]){ const [t0,v0]=kn[i-1],[t1,v1]=kn[i]; return v0+(v1-v0)*(t-t0)/(t1-t0); } } return kn[kn.length-1][1]; };
+}
+const makeIpcaAt=path=>t=>{ const y=new Date(t).getUTCFullYear(); const i=Math.max(0,Math.min(YS.length-1,y-Y0)); return path.ipca[i]; };
+// resultado de uma opção numa trajetória de CDI/IPCA (o Pré não depende do cenário)
+function scenCalc(V,tipo,idx,x,ini,fim,path){
+  const dc=Math.round((fim-ini)/DAY); if(!(dc>0)) return {err:"O vencimento precisa ser posterior à data de aplicação."};
+  const cdiAt=makeCdiAt(path), ipcaAt=makeIpcaAt(path);
+  let F=1, du=0, Fc=1, Fi=1;
+  for(let t=ini;t<fim;t+=DAY){ if(!isBiz(t)) continue; du++;
+    const dc_=Math.pow(1+cdiAt(t)/100,1/252)-1, di=Math.pow(1+ipcaAt(t)/100,1/252)-1;
+    Fc*=1+dc_; Fi*=1+di;
+    if(idx==="pre") F*=Math.pow(1+x,1/252);
+    else if(idx==="pct") F*=1+x*dc_;
+    else if(idx==="cdip") F*=(1+dc_)*Math.pow(1+x,1/252);
+    else F*=(1+di)*Math.pow(1+x,1/252);
+  }
+  if(du<1) return {err:"O período não tem nenhum dia útil."};
+  const bruto=V*(F-1), iof=tipo==="trib"?bruto*iofRate(dc):0, ir=tipo==="trib"?irRate(dc):0, irv=(bruto-iof)*ir, liq=bruto-iof-irv;
+  const gLiq=liq/V, aa252=Math.pow(1+gLiq,252/du)-1, cdiMed=Math.pow(Fc,252/du)-1;
+  const pctCdi=(Math.pow(1+aa252,1/252)-1)/(Math.pow(1+cdiMed,1/252)-1);
+  return {dc,du,bruto,iof,ir,irv,liq,gLiq,aa252,am:Math.pow(1+aa252,21/252)-1,rb:Math.pow(F,252/du)-1,cdiMed,ipcaMed:Math.pow(Fi,252/du)-1,pctCdi};
+}
+// taxa constante do indexador que iguala o líquido da opção ao do Pré
+function breakeven(k,ini,fim,V,target){
+  const tipo=C.isento[k]?"isento":"trib", x=C.rate[k]/100;
+  const f=c=>{ const r= k==="ipca" ? simCalc(V,tipo,k,x,ini,fim,S.cdi/100,c) : simCalc(V,tipo,k,x,ini,fim,c,S.ipca/100); return r.err?NaN:r.liq-target; };
+  let lo= k==="ipca"?-0.10:0.0001, hi=0.60; if(!(f(lo)<0&&f(hi)>0)) return NaN;
+  for(let i=0;i<60;i++){ const m=(lo+hi)/2; (f(m)<0?lo=m:hi=m); } return (lo+hi)/2;
+}
+function scenEditor(paths){
+  if(!$("scEdB").children.length){
+    $("scEdH").innerHTML=`<tr><th>Cenário</th><th>Indicador</th>${YS.map(y=>`<th>${y}</th>`).join("")}</tr>`;
+    $("scEdB").innerHTML=["cdi","ipca"].map(k=>SCN.map((s,j)=>`<tr class="${j===0?"grp":""}"><td class="lb">${SCL[s]}</td><td class="lb">${k==="cdi"?"CDI fim de ano":"IPCA do ano"}</td>${YS.map(y=>`<td><input class="ci" inputmode="decimal" data-s="${s}" data-k="${k}" data-y="${y}" aria-label="${k} ${s} ${y}"></td>`).join("")}</tr>`).join("")).join("");
+  }
+  $("scEdB").querySelectorAll("input").forEach(inp=>{ const {s,k,y}=inp.dataset, i=YS.indexOf(+y);
+    inp.classList.toggle("ov",isFinite(C.sc.ov[s][k][y]));
+    if(document.activeElement!==inp) inp.value=nf(paths[s][k][i]); });
+}
 let cLast=null;
 function cmpRender(){
-  // controles
   CK.forEach(k=>{
     if(document.activeElement!==$("c_"+k)) $("c_"+k).value=nf(C.rate[k]);
     document.querySelectorAll(`.pills.mini[data-k="${k}"] button`).forEach(b=>b.setAttribute("aria-pressed",String((b.dataset.v==="isento")===!!C.isento[k])));
   });
   $("cIni").value=C.ini; $("cFim").value=C.fim;
   if(document.activeElement!==$("cValor")) $("cValor").value=C.valor.toLocaleString("pt-BR");
-  if(document.activeElement!==$("cCdi")) $("cCdi").value=nf(S.cdi);
-  if(document.activeElement!==$("cIpca")) $("cIpca").value=nf(S.ipca);
+  if(document.activeElement!==$("scShC")) $("scShC").value=nf(C.sc.shC);
+  if(document.activeElement!==$("scShI")) $("scShI").value=nf(C.sc.shI);
   document.querySelectorAll("#cPrazos .chip").forEach(c=>c.setAttribute("aria-pressed",String(toISO(addMonths(parseISO(C.ini),+c.dataset.m))===C.fim)));
   $("cValLbl").textContent=brl(C.valor);
   const A=CK.filter(k=>C.on[k]);
@@ -1733,68 +1791,112 @@ function cmpRender(){
   $("cCols").innerHTML='<col class="rlc">'+A.map(()=>"<col>").join("");
   document.querySelector(".cmp").style.minWidth=(190+150*A.length)+"px";
   cSave();
+  // cenários
+  const paths=scenPaths(); scenEditor(paths);
+  const fa=IND&&IND.focus_anual;
+  $("scSrc").textContent = fa&&fa.selic ? `neutro = Focus de ${isoDM(fa.data||"")}` : "Focus indisponível: neutro constante";
+  $("scHoje").textContent=`${nf(S.cdi)}% hoje`;
+  $("scNeu").innerHTML=`<table class="nt"><tr><td class="yr">Neutro</td>${YS.map(y=>`<td class="yr">${y}</td>`).join("")}</tr><tr><td>CDI</td>${paths.neutro.cdi.map(v=>`<td><b>${nf(v,1)}</b></td>`).join("")}</tr><tr><td>IPCA</td>${paths.neutro.ipca.map(v=>`<td><b>${nf(v,1)}</b></td>`).join("")}</tr></table>`;
   // cálculo
-  const ini=parseISO(C.ini), fim=parseISO(C.fim), V=C.valor, cdi=S.cdi/100, ipca=S.ipca/100;
-  const R={}; let err=null;
-  A.forEach(k=>{ const r=simCalc(V, C.isento[k]?"isento":"trib", k, C.rate[k]/100, ini, fim, cdi, ipca); if(r.err) err=r.err; R[k]=r; });
-  $("cNote").innerHTML=`<span><b>Só o prefixado tem a rentabilidade definida no momento da aplicação.</b> %CDI, CDI+ e IPCA+ foram projetados com CDI de ${nf(S.cdi)}% e IPCA de ${nf(S.ipca)}% a.a.; a variação desses indicadores ao longo do prazo altera o resultado final.</span>`;
+  const ini=parseISO(C.ini), fim=parseISO(C.fim), V=C.valor;
+  const res={}, avg={}; let err=null;
+  SCN.forEach(s=>{ res[s]={}; avg[s]=scenCalc(V,"isento","pct",1,ini,fim,paths[s]); if(avg[s].err) err=avg[s].err;
+    A.forEach(k=>{ const r=scenCalc(V,C.isento[k]?"isento":"trib",k,C.rate[k]/100,ini,fim,paths[s]); if(r.err) err=r.err; res[s][k]=r; }); });
+  $("cNote").innerHTML=`<span><b>Pré:</b> rentabilidade definida na aplicação, igual nos três cenários. <b>%CDI, CDI+ e IPCA+:</b> projetados com as trajetórias de CDI e IPCA de cada cenário (neutro = Focus; queda e alta = neutro ∓ ${nf(C.sc.shC,1)} p.p. no CDI e ${nf(C.sc.shI,1)} p.p. no IPCA). Os indicadores efetivos podem ser diferentes.</span>`;
   if(err){ $("cWarn").hidden=false; $("cWarn").textContent=err; $("cBody").innerHTML=""; $("cWinV").textContent="—"; $("cWinS").textContent=""; cLast=null; return; }
   $("cWarn").hidden=true;
-  const any=R[A[0]];
+  const any=res.neutro[A[0]];
   $("cDU").textContent=any.du.toLocaleString("pt-BR"); $("cDC").textContent=any.dc.toLocaleString("pt-BR");
-  const order=[...A].sort((a,b)=>R[b].liq-R[a].liq), best=order[0], second=order[1];
-  document.querySelectorAll(".cmp th.cc").forEach(th=>{ const b=th.dataset.k===best; th.classList.toggle("win",b); th.querySelector(".star").hidden=!b; });
-  const cell=(k,v,cls="")=>`<td class="num${k===best?" win":""}${cls?" "+cls:""}">${v}</td>`;
+  const best={}; SCN.forEach(s=>{ best[s]=A.reduce((a,b)=>res[s][b].liq>res[s][a].liq?b:a); });
+  const worst=k=>Math.min(...SCN.map(s=>res[s][k].liq));
+  const robust=A.reduce((a,b)=>worst(b)>worst(a)?b:a);
   const multi=A.length>1;
+  document.querySelectorAll(".cmp th.cc").forEach(th=>{ const b=multi&&th.dataset.k===robust; th.classList.toggle("win",b); th.querySelector(".star").hidden=!b; });
+  // cabeçalho
+  $("cWinK").textContent = multi ? "★ Mais robusta · melhor resultado no pior cenário" : "Opção selecionada";
+  $("cWinV").textContent = cName(robust);
+  $("cWinS").innerHTML = SCN.map(s=>`<span class="hs"><i>${SCL[s]}</i>${multi?`<b>${cName(best[s])}</b> · `:""}${brl(V+res[s][best[s]].liq)}</span>`).join("");
+  // tabela
+  const cell=(k,v,w,cls="")=>`<td class="num${w?" win":""}${cls?" "+cls:""}">${v}</td>`;
   const row=(lbl,fn,cls="")=>`<tr class="${cls}"><td>${lbl}</td>${A.map(k=>fn(k)).join("")}</tr>`;
-  const hasIof=A.some(k=>R[k].iof>0);
-  let h = row("Taxa a.a. (projetada)",k=>cell(k,nf(R[k].r*100)+"%"))
-    + row("Rendimento bruto",k=>cell(k,brl(R[k].bruto)));
-  if(hasIof) h += row("IOF",k=>cell(k,R[k].iof>0?"− "+brl(R[k].iof):"—",R[k].iof>0?"neg":""));
-  h += row("Imposto de renda",k=>cell(k, C.isento[k]?"Isento":`− ${brl(R[k].irv)} <small style="color:var(--fg-3)">(${irLbl(R[k].ir)})</small>`, C.isento[k]?"":"neg"))
-    + row("Rendimento líquido",k=>cell(k,brl(R[k].liq)))
-    + row("Valor líquido no vencimento",k=>cell(k,brl(V+R[k].liq)),"total")
-    + (multi? row("Diferença para a melhor",k=>cell(k, k===best?"—":"− "+brl(R[best].liq-R[k].liq), k===best?"":"neg")) : "")
-    + row("Rentab. líquida no período",k=>cell(k,nf(R[k].gLiq*100)+"%"),"sub")
-    + row("Taxa líquida a.m.",k=>cell(k,nf(R[k].am*100,3)+"%"),"sub")
-    + row("Taxa líquida a.a. (252)",k=>cell(k,nf(R[k].aa252*100)+"%"),"sub")
-    + row("Equivale a (líquido)",k=>cell(k,nf(R[k].pctCdi*100)+"% do CDI"),"sub");
+  const avgTxt=s=>`CDI ${nf(avg[s].cdiMed*100,1)}% · IPCA ${nf(avg[s].ipcaMed*100,1)}%`;
+  let h=`<tr class="gh"><td colspan="${A.length+1}">Valor líquido no vencimento · taxa líquida a.a.</td></tr>`;
+  SCN.forEach(s=>{ h+=row(`<b>${SCL[s]}</b><span class="sl">${avgTxt(s)}</span>`, k=>{ const r=res[s][k]; return cell(k,`${brl(V+r.liq)}<span class="sl">${nf(r.aa252*100)}% a.a.</span>`, multi&&best[s]===k); }, "scn"+(s==="neutro"?" neu":"")); });
+  h+=row("Amplitude (alta − queda)",k=> k==="pre" ? `<td class="num lock">travado</td>` : cell(k,"± "+brl(Math.abs(res.alta[k].liq-res.queda[k].liq)/2),false));
+  if(multi) h+=row("Diferença para a melhor (neutro)",k=>cell(k, best.neutro===k?"—":"− "+brl(res.neutro[best.neutro].liq-res.neutro[k].liq),false, best.neutro===k?"":"neg"));
+  h+=`<tr class="tog"><td colspan="${A.length+1}"><button type="button" class="lnk" id="cDetT">${C.det?"▾ Ocultar":"▸ Mostrar"} detalhes do cenário neutro</button></td></tr>`;
+  if(C.det){ const N=res.neutro, hasIof=A.some(k=>N[k].iof>0);
+    h+=row("Taxa bruta a.a. (neutro)",k=>cell(k,nf(N[k].rb*100)+"%"),"sub")
+     + row("Rendimento bruto",k=>cell(k,brl(N[k].bruto)),"sub");
+    if(hasIof) h+=row("IOF",k=>cell(k,N[k].iof>0?"− "+brl(N[k].iof):"—",false,N[k].iof>0?"neg":""),"sub");
+    h+=row("Imposto de renda",k=>cell(k, C.isento[k]?"Isento":`− ${brl(N[k].irv)} <small style="color:var(--fg-3)">(${irLbl(N[k].ir)})</small>`,false, C.isento[k]?"":"neg"),"sub")
+     + row("Rendimento líquido",k=>cell(k,brl(N[k].liq)),"sub")
+     + row("Rentab. líquida no período",k=>cell(k,nf(N[k].gLiq*100)+"%"),"sub")
+     + row("Taxa líquida a.m.",k=>cell(k,nf(N[k].am*100,3)+"%"),"sub")
+     + row("Equivale a (líquido)",k=>cell(k,nf(N[k].pctCdi*100)+"% do CDI"),"sub");
+  }
   $("cBody").innerHTML=h;
-  $("cWinK").textContent = multi ? "★ Melhor opção no vencimento" : "Opção selecionada";
-  $("cWinV").textContent=cName(best);
-  $("cWinS").innerHTML = `<b>${brl(V+R[best].liq)}</b> líquido · ${nf(R[best].am*100,3)}% a.m.` + (multi ? ` · <b>+ ${brl(R[best].liq-R[second].liq)}</b> sobre a 2ª opção (${cName(second)})` : "");
-  cLast={R,best,V,ini,fim,A};
-  scenRender(A,ini,fim,V,R);
+  // pontos de empate
+  if(A.includes("pre")){
+    const tgt=res.neutro.pre.liq, items=A.filter(k=>k!=="pre").map(k=>{ const be=breakeven(k,ini,fim,V,tgt); const lbl=k==="ipca"?"IPCA":"CDI";
+      const sc=SCN.map(s=>`${SCL[s].toLowerCase()} ${nf((k==="ipca"?avg[s].ipcaMed:avg[s].cdiMed)*100,1)}%`).join(" · ");
+      return `<div class="be">${cName("pre")} ganha de <b>${cName(k)}</b> se o ${lbl} médio do período ficar abaixo de <b>${isFinite(be)?nf(be*100,2)+"% a.a.":"—"}</b><small>${lbl} médio nos cenários: ${sc}</small></div>`; });
+    $("scBE").innerHTML = items.join("") || `<div class="be">Inclua uma opção pós-fixada para ver os pontos de empate.</div>`;
+  } else $("scBE").innerHTML=`<div class="be">Inclua o Pré na comparação para ver os pontos de empate.</div>`;
+  cLast={A,res,avg,V,ini,fim,paths,best,robust,R:res.neutro};
+  drawScen();
 }
+function drawScen(){
+  if(!cLast) return; const {A,res}=cLast, svg=$("scChart"), box=$("scChartBox");
+  const W=Math.max(280,box.clientWidth), rowH=34, Pd={l:Math.min(178,W*0.42),r:16,t:8,b:26}, H=Pd.t+Pd.b+rowH*A.length;
+  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  const vals=A.flatMap(k=>SCN.map(s=>res[s][k].aa252*100)); let lo=Math.min(...vals), hi=Math.max(...vals);
+  const pad=Math.max(0.3,(hi-lo)*0.12); const ticks=niceTicks(lo-pad,hi+pad,5); lo=ticks[0]; hi=ticks[ticks.length-1];
+  const X=v=>Pd.l+(v-lo)/(hi-lo)*(W-Pd.l-Pd.r);
+  let s="";
+  ticks.forEach(v=>{ s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${Pd.t}" y2="${H-Pd.b}" stroke="var(--line)"/><text class="ax" x="${X(v)}" y="${H-Pd.b+16}" text-anchor="middle">${nf(v,(ticks[1]-ticks[0])<1?1:0)}%</text>`; });
+  A.forEach((k,i)=>{ const y=Pd.t+rowH*(i+.5), q=res.queda[k].aa252*100, n=res.neutro[k].aa252*100, a=res.alta[k].aa252*100;
+    s+=`<text x="${Pd.l-10}" y="${y+4}" text-anchor="end" style="font:500 11px var(--f-num);fill:var(--fg)">${(k==="pre"?"Pré ":"")+fmtRate(k,C.rate[k]/100)+(C.isento[k]?" isento":"")}</text>`;
+    if(k!=="pre"){ s+=`<line x1="${X(Math.min(q,a))}" x2="${X(Math.max(q,a))}" y1="${y}" y2="${y}" stroke="var(--fg-3)" stroke-width="2"/>`;
+      [[q,"Q"],[a,"A"]].forEach(([v,l])=>{ s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${y-6}" y2="${y+6}" stroke="var(--fg-2)" stroke-width="2"/><text class="ax" x="${X(v)}" y="${y-9}" text-anchor="middle">${l}</text>`; }); }
+    s+=`<circle cx="${X(n)}" cy="${y}" r="5.5" fill="${k==="pre"?"var(--orange)":"var(--teal)"}" stroke="var(--surface)" stroke-width="2"><title>${cName(k)} · queda ${nf(q)}% · neutro ${nf(n)}% · alta ${nf(a)}%</title></circle>`;
+  });
+  svg.innerHTML=s;
+}
+try{ let t; new ResizeObserver(()=>{ clearTimeout(t); t=setTimeout(drawScen,60); }).observe($("scChartBox")); }catch(e){}
+/* eventos */
 CK.forEach(k=>{
   $("c_"+k).addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)){ C.rate[k]=v; cmpRender(); } });
   $("c_"+k).addEventListener("blur",()=>{ $("c_"+k).value=nf(C.rate[k]); });
   document.querySelectorAll(`.pills.mini[data-k="${k}"] button`).forEach(b=>b.addEventListener("click",()=>{ C.isento[k]=b.dataset.v==="isento"; cmpRender(); }));
 });
+$("cBody").addEventListener("click",e=>{ if(e.target.id==="cDetT"){ C.det=!C.det; cmpRender(); } });
 document.querySelectorAll(".cmp .lnk[data-open]").forEach(b=>b.addEventListener("click",()=>{
   const k=b.dataset.open; T.tipo=C.isento[k]?"isento":"trib"; T.idx=k; T.rate[k]=C.rate[k]; T.ini=C.ini; T.fim=C.fim; T.valor=C.valor;
+  if(k!=="pre" && cLast){ S.cdi=+(cLast.avg.neutro.cdiMed*100).toFixed(2); S.ipca=+(cLast.avg.neutro.ipcaMed*100).toFixed(2); S.manual=true; }
   showTab("sim"); syncAll();
 }));
 document.querySelectorAll("#cOn .chip").forEach(c=>c.addEventListener("click",()=>{
-  const k=c.dataset.k; if(C.on[k] && CK.filter(x=>C.on[x]).length===1) return; // mantém ao menos uma opção
+  const k=c.dataset.k; if(C.on[k] && CK.filter(x=>C.on[x]).length===1) return;
   C.on[k]=!C.on[k]; cmpRender(); }));
 document.querySelectorAll("#cPrazos .chip").forEach(c=>c.addEventListener("click",()=>{ C.fim=toISO(addMonths(parseISO(C.ini),+c.dataset.m)); cmpRender(); }));
 $("cIni").addEventListener("change",e=>{ if(e.target.value){ C.ini=e.target.value; cmpRender(); } });
 $("cFim").addEventListener("change",e=>{ if(e.target.value){ C.fim=e.target.value; cmpRender(); } });
 $("cValor").addEventListener("input",e=>{ const v=parseInt(String(e.target.value).replace(/\D/g,""),10); C.valor=isFinite(v)?v:0; cmpRender(); });
 $("cValor").addEventListener("blur",()=>{ $("cValor").value=C.valor.toLocaleString("pt-BR"); });
-$("cCdi").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)&&v>0){ S.cdi=v; S.manual=true; syncAll(); } });
-$("cIpca").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)){ S.ipca=v; S.manual=true; syncAll(); } });
-["cCdi","cIpca"].forEach(k=>$(k).addEventListener("blur",()=>{ $(k).value=nf(k==="cCdi"?S.cdi:S.ipca); }));
-$("cCopy").addEventListener("click",()=>{ if(!cLast) return; const {R,V,A}=cLast;
+$("scEdB").addEventListener("input",e=>{ const el=e.target; if(!el.dataset.s) return; const v=parseNum(el.value); if(!isFinite(v)) return;
+  C.sc.ov[el.dataset.s][el.dataset.k][el.dataset.y]=v; cmpRender(); });
+$("scEdB").addEventListener("focusout",()=>cmpRender());
+$("scShC").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)&&v>=0){ C.sc.shC=v; cmpRender(); } });
+$("scShI").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)&&v>=0){ C.sc.shI=v; cmpRender(); } });
+["scShC","scShI"].forEach(k=>$(k).addEventListener("blur",()=>{ $(k).value=nf(k==="scShC"?C.sc.shC:C.sc.shI); }));
+$("scReset").addEventListener("click",()=>{ SCN.forEach(s=>{ C.sc.ov[s]={cdi:{},ipca:{}}; }); C.sc.shC=2; C.sc.shI=1; cmpRender(); });
+$("scEdit").addEventListener("click",()=>{ $("scEd").open=true; $("scEd").scrollIntoView({behavior:"smooth",block:"start"}); });
+$("cCopy").addEventListener("click",()=>{ if(!cLast) return; const {A,res,avg,V,paths}=cLast;
   const head=["", ...A.map(k=>cName(k))].join("\t");
-  const L=(lbl,fn)=>[lbl,...A.map(fn)].join("\t");
-  const lines=[head,
-    L("Rendimento bruto",k=>nf(R[k].bruto)), L("Imposto de renda",k=>C.isento[k]?"Isento":nf(R[k].irv)),
-    L("Rendimento líquido",k=>nf(R[k].liq)), L("Valor líquido no vencimento",k=>nf(V+R[k].liq)),
-    L("Taxa líquida a.m.",k=>nf(R[k].am*100,3)+"%"), L("Taxa líquida a.a.",k=>nf(R[k].aa252*100)+"%")];
-  copyText(lines.join("\n")+`\nAplicação de ${brl(V)} de ${fmtDate(cLast.ini)} a ${fmtDate(cLast.fim)}. Projeções: CDI ${nf(S.cdi)}%, IPCA ${nf(S.ipca)}% a.a.`,"cCopied","Tabela copiada");
-});
+  const L=SCN.flatMap(s=>[[`${SCL[s]} (CDI ${nf(avg[s].cdiMed*100,1)}% · IPCA ${nf(avg[s].ipcaMed*100,1)}%) líquido`,...A.map(k=>nf(V+res[s][k].liq))].join("\t"),[`${SCL[s]} a.a.`,...A.map(k=>nf(res[s][k].aa252*100)+"%")].join("\t")]);
+  const P=SCN.map(s=>`${SCL[s]}: CDI fim de ano ${YS.map((y,i)=>`${y} ${nf(paths[s].cdi[i])}%`).join(", ")} · IPCA ${YS.map((y,i)=>`${y} ${nf(paths[s].ipca[i])}%`).join(", ")}`).join("\n");
+  copyText([head,...L].join("\n")+`\nAplicação de ${brl(V)} de ${fmtDate(cLast.ini)} a ${fmtDate(cLast.fim)}.\nPremissas\n${P}`,"cCopied","Tabela copiada"); });
 
 /* =================== MÓDULO: CARTEIRA / ESCADA =================== */
 const PROD={pre:"Pré",pct:"%CDI",cdip:"CDI+",ipca:"IPCA+"};
@@ -2124,121 +2226,6 @@ $("kCopy").addEventListener("click",()=>{ if(!kLast) return; const o=kLast;
 $("kCopyT").addEventListener("click",()=>{ if(!kLast) return;
   const head=["Ativo de risco","Valor do risco","Renda fixa","Total no vencimento","Resultado","a.a.","vs. 100% RF"].join("\t");
   copyText([head,...kLast.rows.map(o=>[nf(o.s,0)+"%",nf(o.vr),nf(o.rf),nf(o.tot),nf(o.res),nf(o.aa*100)+"%",nf(o.vs)].join("\t"))].join("\n"),"kCopiedT","Tabela copiada"); });
-
-/* =================== CENÁRIOS (Comparador) =================== */
-const SCN=["queda","neutro","alta"], SCL={queda:"Queda",neutro:"Neutro",alta:"Alta"};
-const Y0=new Date(today).getUTCFullYear(), YS=[0,1,2,3,4].map(i=>Y0+i);
-C.sc=Object.assign({shC:2,shI:1,ov:{}}, C.sc||{});
-SCN.forEach(s=>{ C.sc.ov[s]=C.sc.ov[s]||{cdi:{},ipca:{}}; });
-function scenBase(){
-  const fa=IND&&IND.focus_anual;
-  return { cdi: YS.map(y=> fa&&fa.selic&&isFinite(fa.selic[y]) ? fa.selic[y]-0.10 : S.cdi),
-           ipca: YS.map(y=> fa&&fa.ipca&&isFinite(fa.ipca[y]) ? fa.ipca[y] : S.ipca) };
-}
-function scenPaths(){
-  const b=scenBase(), ov=C.sc.ov, out={};
-  const ap=(s,k,arr)=>arr.map((v,i)=>{ const o=ov[s][k][YS[i]]; return isFinite(o)?o:v; });
-  out.neutro={cdi:ap("neutro","cdi",b.cdi), ipca:ap("neutro","ipca",b.ipca)};
-  out.queda ={cdi:ap("queda","cdi",out.neutro.cdi.map(v=>Math.max(0,v-C.sc.shC))), ipca:ap("queda","ipca",out.neutro.ipca.map(v=>v-C.sc.shI))};
-  out.alta  ={cdi:ap("alta","cdi",out.neutro.cdi.map(v=>v+C.sc.shC)), ipca:ap("alta","ipca",out.neutro.ipca.map(v=>v+C.sc.shI))};
-  return out;
-}
-// CDI do dia: interpolação linear entre hoje (CDI atual) e os fins de ano; constante depois do último ponto
-function makeCdiAt(path){
-  const kn=[[today,S.cdi], ...YS.map((y,i)=>[Date.UTC(y,11,31),path.cdi[i]])];
-  return t=>{ if(t<=kn[0][0]) return kn[0][1]; for(let i=1;i<kn.length;i++){ if(t<=kn[i][0]){ const [t0,v0]=kn[i-1],[t1,v1]=kn[i]; return v0+(v1-v0)*(t-t0)/(t1-t0); } } return kn[kn.length-1][1]; };
-}
-const makeIpcaAt=path=>t=>{ const y=new Date(t).getUTCFullYear(); const i=Math.max(0,Math.min(YS.length-1,y-Y0)); return path.ipca[i]; };
-function scenCalc(V,tipo,idx,x,ini,fim,path){
-  if(idx==="pre") return simCalc(V,tipo,idx,x,ini,fim,S.cdi/100,S.ipca/100);
-  const dc=Math.round((fim-ini)/DAY); if(!(dc>0)) return {err:"datas"};
-  const cdiAt=makeCdiAt(path), ipcaAt=makeIpcaAt(path);
-  let F=1, du=0, Fc=1, Fi=1;
-  for(let t=ini;t<fim;t+=DAY){ if(!isBiz(t)) continue; du++;
-    const dc_=Math.pow(1+cdiAt(t)/100,1/252)-1, di=Math.pow(1+ipcaAt(t)/100,1/252)-1;
-    Fc*=1+dc_; Fi*=1+di;
-    if(idx==="pct") F*=1+x*dc_;
-    else if(idx==="cdip") F*=(1+dc_)*Math.pow(1+x,1/252);
-    else if(idx==="ipca") F*=(1+di)*Math.pow(1+x,1/252);
-  }
-  if(du<1) return {err:"datas"};
-  const bruto=V*(F-1), iof=tipo==="trib"?bruto*iofRate(dc):0, ir=tipo==="trib"?irRate(dc):0, irv=(bruto-iof)*ir, liq=bruto-iof-irv;
-  const gLiq=liq/V; return {dc,du,bruto,iof,ir,irv,liq,gLiq,aa252:Math.pow(1+gLiq,252/du)-1,
-    cdiMed:Math.pow(Fc,252/du)-1, ipcaMed:Math.pow(Fi,252/du)-1};
-}
-// empate: taxa constante do indexador que iguala o resultado líquido da opção ao do Pré
-function breakeven(k,ini,fim,V,target){
-  const tipo=C.isento[k]?"isento":"trib", x=C.rate[k]/100;
-  const f=c=>{ const r= k==="ipca" ? simCalc(V,tipo,k,x,ini,fim,S.cdi/100,c) : simCalc(V,tipo,k,x,ini,fim,c,S.ipca/100); return r.err?NaN:r.liq-target; };
-  let lo= k==="ipca"?-0.10:0.0001, hi=0.60; if(!(f(lo)<0&&f(hi)>0)) return NaN;
-  for(let i=0;i<60;i++){ const m=(lo+hi)/2; (f(m)<0?lo=m:hi=m); } return (lo+hi)/2;
-}
-let scLast=null;
-function scenRender(A,ini,fim,V,R0){
-  const paths=scenPaths();
-  // editor (estrutura uma vez; valores sem atrapalhar o campo em edição)
-  if(!$("scEdB").children.length){
-    $("scEdH").innerHTML=`<tr><th>Cenário</th><th>Indicador</th>${YS.map(y=>`<th>${y}</th>`).join("")}</tr>`;
-    $("scEdB").innerHTML=["cdi","ipca"].map(k=>SCN.map((s,j)=>`<tr class="${j===0?"grp":""}"><td class="lb">${SCL[s]}</td><td class="lb">${k==="cdi"?"CDI fim de ano":"IPCA do ano"}</td>${YS.map(y=>`<td><input class="ci" inputmode="decimal" data-s="${s}" data-k="${k}" data-y="${y}" aria-label="${k} ${s} ${y}"></td>`).join("")}</tr>`).join("")).join("");
-  }
-  $("scEdB").querySelectorAll("input").forEach(inp=>{ const {s,k,y}=inp.dataset, i=YS.indexOf(+y);
-    inp.classList.toggle("ov",isFinite(C.sc.ov[s][k][y]));
-    if(document.activeElement!==inp) inp.value=nf(paths[s][k][i]); });
-  if(document.activeElement!==$("scShC")) $("scShC").value=nf(C.sc.shC);
-  if(document.activeElement!==$("scShI")) $("scShI").value=nf(C.sc.shI);
-  const fa=IND&&IND.focus_anual;
-  $("scSrc").textContent = fa&&fa.selic ? `neutro do Focus de ${isoDM(fa.data||"")}` : "Focus anual indisponível: neutro = CDI e IPCA constantes";
-  $("scHoje").textContent=`${nf(S.cdi)}% hoje`;
-  // cálculo
-  const res={}; SCN.forEach(s=>{ res[s]={}; A.forEach(k=>{ res[s][k]=scenCalc(V,C.isento[k]?"isento":"trib",k,C.rate[k]/100,ini,fim,paths[s]); }); });
-  const any=A.find(k=>k!=="pre");
-  const med=s=>{ const r=any&&res[s][any]; return r&&!r.err ? `CDI ${nf(r.cdiMed*100,1)}% · IPCA ${nf(r.ipcaMed*100,1)}%` : ""; };
-  const best={}; SCN.forEach(s=>{ best[s]=A.reduce((a,b)=>res[s][b].liq>res[s][a].liq?b:a); });
-  $("scSub").textContent=`Trajetórias de CDI e IPCA ano a ano até ${fmtDate(fim)} · o Pré é igual nos três cenários`;
-  $("scWin").innerHTML=SCN.map(s=>`<span class="sw"><i>${SCL[s]}</i> melhor: <b>${cName(best[s])}</b></span>`).join("");
-  $("scHead").innerHTML=`<tr class="g"><th></th>${SCN.map(s=>`<th colspan="2" class="bl${s!=="neutro"?" sq":""}">${SCL[s]}<small>${med(s)}</small></th>`).join("")}<th class="bl">Amplitude</th></tr>
-    <tr><th>Opção</th>${SCN.map(()=>`<th class="bl">Líquido no venc.</th><th>a.a.</th>`).join("")}<th class="bl">Alta − Queda</th></tr>`;
-  $("scBody").innerHTML=A.map(k=>`<tr><td>${cName(k)}</td>${SCN.map(s=>{ const r=res[s][k]; const w=best[s]===k&&A.length>1?" w":""; return `<td class="num bl${w}">${brl(V+r.liq)}</td><td class="num${w}">${nf(r.aa252*100)}%</td>`; }).join("")}<td class="num bl amp">${k==="pre"?"travado":"± "+brl(Math.abs(res.alta[k].liq-res.queda[k].liq)/2)}</td></tr>`).join("");
-  // pontos de empate
-  if(A.includes("pre")){
-    const tgt=R0.pre.liq, items=A.filter(k=>k!=="pre").map(k=>{ const be=breakeven(k,ini,fim,V,tgt); const lbl=k==="ipca"?"IPCA":"CDI";
-      const sc=SCN.map(s=>`${SCL[s].toLowerCase()} ${nf((k==="ipca"?res[s][k].ipcaMed:res[s][k].cdiMed)*100,1)}%`).join(" · ");
-      return `<div class="be">${cName("pre")} ganha de <b>${cName(k)}</b> se o ${lbl} médio do período ficar abaixo de <b>${isFinite(be)?nf(be*100,2)+"% a.a.":"—"}</b><small>${lbl} médio nos cenários: ${sc}</small></div>`; });
-    $("scBE").innerHTML = items.join("") || `<div class="be">Inclua uma opção pós-fixada para ver os pontos de empate.</div>`;
-  } else $("scBE").innerHTML=`<div class="be">Inclua o Pré na comparação para ver os pontos de empate.</div>`;
-  scLast={A,res,V,paths,best};
-  drawScen();
-}
-function drawScen(){
-  if(!scLast) return; const {A,res}=scLast, svg=$("scChart"), box=$("scChartBox");
-  const W=Math.max(280,box.clientWidth), rowH=34, Pd={l:Math.min(178,W*0.42),r:16,t:8,b:26}, H=Pd.t+Pd.b+rowH*A.length;
-  svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
-  const vals=A.flatMap(k=>SCN.map(s=>res[s][k].aa252*100)); let lo=Math.min(...vals), hi=Math.max(...vals);
-  const pad=Math.max(0.3,(hi-lo)*0.12); const ticks=niceTicks(lo-pad,hi+pad,5); lo=ticks[0]; hi=ticks[ticks.length-1];
-  const X=v=>Pd.l+(v-lo)/(hi-lo)*(W-Pd.l-Pd.r);
-  let s="";
-  ticks.forEach(v=>{ s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${Pd.t}" y2="${H-Pd.b}" stroke="var(--line)"/><text class="ax" x="${X(v)}" y="${H-Pd.b+16}" text-anchor="middle">${nf(v,(ticks[1]-ticks[0])<1?1:0)}%</text>`; });
-  A.forEach((k,i)=>{ const y=Pd.t+rowH*(i+.5), q=res.queda[k].aa252*100, n=res.neutro[k].aa252*100, a=res.alta[k].aa252*100;
-    s+=`<text x="${Pd.l-10}" y="${y+4}" text-anchor="end" style="font:500 11px var(--f-num);fill:var(--fg)">${(k==="pre"?"Pré ":"")+fmtRate(k,C.rate[k]/100)+(C.isento[k]?" isento":"")}</text>`;
-    if(k!=="pre"){ s+=`<line x1="${X(Math.min(q,a))}" x2="${X(Math.max(q,a))}" y1="${y}" y2="${y}" stroke="var(--fg-3)" stroke-width="2"/>`;
-      [[q,"Q"],[a,"A"]].forEach(([v,l])=>{ s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${y-6}" y2="${y+6}" stroke="var(--fg-2)" stroke-width="2"/><text class="ax" x="${X(v)}" y="${y-9}" text-anchor="middle">${l}</text>`; }); }
-    s+=`<circle cx="${X(n)}" cy="${y}" r="5.5" fill="${k==="pre"?"var(--orange)":"var(--teal)"}" stroke="var(--surface)" stroke-width="2"><title>${cName(k)} · queda ${nf(q)}% · neutro ${nf(n)}% · alta ${nf(a)}%</title></circle>`;
-  });
-  svg.innerHTML=s;
-}
-try{ let t; new ResizeObserver(()=>{ clearTimeout(t); t=setTimeout(drawScen,60); }).observe($("scChartBox")); }catch(e){}
-$("scEdB").addEventListener("input",e=>{ const el=e.target; if(!el.dataset.s) return; const v=parseNum(el.value); if(!isFinite(v)) return;
-  C.sc.ov[el.dataset.s][el.dataset.k][el.dataset.y]=v; cmpRender(); });
-$("scEdB").addEventListener("focusout",()=>cmpRender());
-$("scShC").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)&&v>=0){ C.sc.shC=v; cmpRender(); } });
-$("scShI").addEventListener("input",e=>{ const v=parseNum(e.target.value); if(isFinite(v)&&v>=0){ C.sc.shI=v; cmpRender(); } });
-["scShC","scShI"].forEach(k=>$(k).addEventListener("blur",()=>{ $(k).value=nf(k==="scShC"?C.sc.shC:C.sc.shI); }));
-$("scReset").addEventListener("click",()=>{ SCN.forEach(s=>{ C.sc.ov[s]={cdi:{},ipca:{}}; }); C.sc.shC=2; C.sc.shI=1; cmpRender(); });
-$("scCopy").addEventListener("click",()=>{ if(!scLast) return; const {A,res,V}=scLast;
-  const head=["Opção",...SCN.flatMap(s=>[SCL[s]+" líquido",SCL[s]+" a.a."])].join("\t");
-  const L=A.map(k=>[cName(k),...SCN.flatMap(s=>[nf(V+res[s][k].liq),nf(res[s][k].aa252*100)+"%"])].join("\t"));
-  const P=["CDI fim de ano","IPCA do ano"].map((lbl,j)=>SCN.map(s=>`${SCL[s]} ${lbl}: `+YS.map((y,i)=>`${y} ${nf(scLast.paths[s][j?"ipca":"cdi"][i])}%`).join(" · ")).join("\n")).join("\n");
-  copyText([head,...L].join("\n")+"\n\nPremissas\n"+P,"scCopied","Matriz copiada"); });
 
 /* =================== ABAS =================== */
 const TABS={gross:{h:'Gross-up isento × tributável'}, sim:{h:'Simulador de aplicação'}, eq:{h:'Equivalência de taxas'}, cmp:{h:'Comparador de aplicações'}, cart:{h:'Carteira e escada de vencimentos'}, prot:{h:'Capital protegido'}};
