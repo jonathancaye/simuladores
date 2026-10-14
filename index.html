@@ -464,11 +464,13 @@ select.ci{font-family:var(--f-num);padding:2px 3px}
 .sed .ci.ov{border-color:var(--orange);background:var(--orange-soft)}
 .sed tr.grp td{border-top:1px solid var(--fg-3)}
 /* ===== Comparador unificado ===== */
-.hsc{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:0!important;padding-top:2px!important}
+.hsc{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border-top:1px solid rgba(255,255,255,.35)!important;padding-top:8px!important;margin-top:4px}
+.hsc .hsl{grid-column:1/-1;font:700 9.5px var(--f-num);letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.8)}
+.hsc .hs span{font:10.5px var(--f-num);color:rgba(255,255,255,.82);margin-top:1px}
 .hsc .hs{display:flex;flex-direction:column;gap:2px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.35);border-radius:3px;padding:7px 10px;min-width:0}
 .hsc .hs i{font-style:normal;font:700 9.5px var(--f-num);letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.75)}
 .hsc .hs b{font:600 15px var(--f-num);color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-@media (max-width:560px){.hsc{grid-template-columns:minmax(0,1fr)}.hsc .hs{flex-direction:row;justify-content:space-between;align-items:baseline;padding:6px 10px}}
+@media (max-width:560px){.hsc{grid-template-columns:minmax(0,1fr)}.hsc .hs{display:grid;grid-template-columns:auto 1fr;align-items:baseline;gap:2px 10px;padding:6px 10px}.hsc .hs b{text-align:right}.hsc .hs span{grid-column:1/-1}}
 .scn-sum{font:11px/1.6 var(--f-num);color:var(--fg-2);background:var(--surface);border:1px solid var(--side-line);border-radius:2px;padding:6px 8px;overflow-x:auto;white-space:nowrap}
 .scn-sum b{color:var(--fg);font-weight:600}
 .scn-sum .nt{width:100%;border-collapse:collapse}
@@ -1819,7 +1821,7 @@ function cmpRender(){
   $("cWinV").textContent = cName(robust);
   const shortN=k=>({pre:`Pré ${nf(C.rate.pre)}%`,pct:`${nf(C.rate.pct)}% CDI`,cdip:`CDI + ${nf(C.rate.cdip)}%`,ipca:`IPCA + ${nf(C.rate.ipca)}%`})[k];
   const ico={queda:"↓",neutro:"→",alta:"↑"};
-  $("cWinS").innerHTML = SCN.map(s=>`<div class="hs"><i>${ico[s]} ${SCL[s]}</i><b>${shortN(best[s])}</b></div>`).join("");
+  $("cWinS").innerHTML = `<div class="hsl">Melhor resultado em cada cenário</div>` + SCN.map(s=>`<div class="hs"><i>${ico[s]} ${SCL[s]}</i><b>${shortN(best[s])}</b><span>CDI médio ${nf(avg[s].cdiMed*100,1)}% · IPCA médio ${nf(avg[s].ipcaMed*100,1)}% a.a.</span></div>`).join("");
   // tabela
   const cell=(k,v,w,cls="")=>`<td class="num${w?" win":""}${cls?" "+cls:""}">${v}</td>`;
   const row=(lbl,fn,cls="")=>`<tr class="${cls}"><td>${lbl}</td>${A.map(k=>fn(k)).join("")}</tr>`;
