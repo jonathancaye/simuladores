@@ -32,9 +32,13 @@ Nasceu da conversão de planilhas Excel do usuário (`Simulador_Bancarios_aai.xl
 2. **Comparador** (`#comparador`) — cálculo **dinâmico por cenários**. Escolha de quais opções comparar
    (Pré, %CDI, CDI+, IPCA+), isenção por coluna. Cenários **Queda / Neutro / Alta**: neutro = Focus anual
    (editável célula a célula), queda/alta = neutro ∓ choque (padrão 2 p.p. CDI, 1 p.p. IPCA).
-   Cabeçalho verde: "Mais robusta" (melhor no pior cenário) e cards com a melhor opção de cada cenário
-   + CDI/IPCA médios. Tabela unificada, amplitude, detalhes do neutro (recolhível), gráfico de faixa (Q/N/A),
-   pontos de empate com o Pré, premissas ano a ano (recolhível). "Abrir no simulador" leva o CDI/IPCA médios
+   Cabeçalho verde: "Melhor no cenário neutro" + linha de **menor arrependimento** (opção que menos perde,
+   no pior caso, para a vencedora de cada cenário; o antigo critério "melhor no pior cenário" favorecia o Pré
+   porque a queda derruba CDI e IPCA juntos) e cards com a melhor opção de cada cenário + CDI/IPCA médios.
+   Tabela unificada, amplitude, diferença para a melhor do neutro, maior perda (arrependimento), detalhes do
+   neutro (recolhível), gráfico de faixa (Q/N/A, linha da melhor do neutro, ★ na vencedora de cada cenário),
+   pontos de empate **contra uma referência** (padrão: melhor do neutro; pills para trocar, `C.ref`), com o
+   outro indicador fixo no neutro (`pairBE`), premissas ano a ano (recolhível). "Abrir no simulador" leva o CDI/IPCA médios
    do neutro; "Levar para a carteira".
 3. **Carteira** (`#carteira`) — posições editáveis (produto, IR, taxa, vencimento, valor em R$ ou %),
    gerador de **escada (ladder)** com inclinação de taxa por degrau, indicadores, cronograma de vencimentos

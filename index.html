@@ -446,6 +446,13 @@ select.ci{font-family:var(--f-num);padding:2px 3px}
 .sc-t{font:600 10.5px var(--f-num);letter-spacing:.08em;text-transform:uppercase;color:var(--fg-2);margin-bottom:6px}
 .sc-t em{font-style:normal;font-weight:400;text-transform:none;letter-spacing:0;color:var(--fg-3);margin-left:6px}
 .sc-be{display:flex;flex-direction:column;gap:6px}
+.be-ref{margin:0 0 8px}
+.be-ref button{padding:4px 4px;font-size:10px}
+.be-ref button:first-child{flex:1.9 1 0}
+.sc-be .be.be-x{border-left-color:var(--line)}
+.win-head .w-r{font:11.5px/1.45 var(--f-num);color:rgba(255,255,255,.88);margin-top:3px}
+.win-head .w-r b{color:#fff;font-weight:600}
+.cmp td.rg-min{font-weight:600}
 .sc-be .be{border-left:3px solid var(--teal);background:var(--surface-2);padding:6px 10px;font-size:12px;line-height:1.45}
 .sc-be .be b{font-family:var(--f-num)}
 .sc-be .be small{display:block;color:var(--fg-3);font:11px var(--f-num);margin-top:2px}
@@ -558,8 +565,9 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
       <div class="card">
         <div class="card-head win-head" id="cWinner">
           <div class="wh-l">
-            <div class="w-k" id="cWinK">★ Mais robusta</div>
+            <div class="w-k" id="cWinK">★ Melhor no cenário neutro</div>
             <div class="w-v" id="cWinV">—</div>
+            <div class="w-r" id="cWinR" hidden></div>
           </div>
           <div class="actions">
             <button type="button" class="btn inv" id="cToCart">Levar para a carteira</button>
@@ -573,28 +581,28 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
             <colgroup id="cCols"><col class="rlc"><col><col><col><col></colgroup>
             <thead><tr><th class="rl">Valor aplicado <b class="num" id="cValLbl" style="color:var(--fg)">—</b></th>
               <th class="cc" data-k="pre">
-                <div class="cc-name"><span>Prefixado</span><span class="star" hidden>★ robusta</span></div>
+                <div class="cc-name"><span>Prefixado</span><span class="star" hidden>★ neutro</span></div>
                 <div class="inrow xs"><input id="c_pre" inputmode="decimal" autocomplete="off" aria-label="Taxa Prefixado"><span class="unit">% a.a.</span></div>
                 <div class="pills mini" data-k="pre"><button type="button" data-v="trib" aria-pressed="true">Tributado</button><button type="button" data-v="isento" aria-pressed="false">Isento</button></div>
                 <div class="cc-note">Taxa fixa, conhecida na aplicação. Não depende do mercado.</div>
                 <button type="button" class="lnk" data-open="pre">Abrir no simulador</button>
               </th>
               <th class="cc" data-k="pct">
-                <div class="cc-name"><span>% do CDI</span><span class="star" hidden>★ robusta</span></div>
+                <div class="cc-name"><span>% do CDI</span><span class="star" hidden>★ neutro</span></div>
                 <div class="inrow xs"><input id="c_pct" inputmode="decimal" autocomplete="off" aria-label="Taxa % do CDI"><span class="unit">% CDI</span></div>
                 <div class="pills mini" data-k="pct"><button type="button" data-v="trib" aria-pressed="true">Tributado</button><button type="button" data-v="isento" aria-pressed="false">Isento</button></div>
                 <div class="cc-note">Percentual do CDI, acumulado dia a dia (convenção de mercado).</div>
                 <button type="button" class="lnk" data-open="pct">Abrir no simulador</button>
               </th>
               <th class="cc" data-k="cdip">
-                <div class="cc-name"><span>CDI +</span><span class="star" hidden>★ robusta</span></div>
+                <div class="cc-name"><span>CDI +</span><span class="star" hidden>★ neutro</span></div>
                 <div class="inrow xs"><input id="c_cdip" inputmode="decimal" autocomplete="off" aria-label="Taxa CDI +"><span class="unit">% a.a.</span></div>
                 <div class="pills mini" data-k="cdip"><button type="button" data-v="trib" aria-pressed="true">Tributado</button><button type="button" data-v="isento" aria-pressed="false">Isento</button></div>
                 <div class="cc-note">100% do CDI mais um spread fixo, compostos.</div>
                 <button type="button" class="lnk" data-open="cdip">Abrir no simulador</button>
               </th>
               <th class="cc" data-k="ipca">
-                <div class="cc-name"><span>IPCA +</span><span class="star" hidden>★ robusta</span></div>
+                <div class="cc-name"><span>IPCA +</span><span class="star" hidden>★ neutro</span></div>
                 <div class="inrow xs"><input id="c_ipca" inputmode="decimal" autocomplete="off" aria-label="Taxa IPCA +"><span class="unit">% a.a.</span></div>
                 <div class="pills mini" data-k="ipca"><button type="button" data-v="trib" aria-pressed="true">Tributado</button><button type="button" data-v="isento" aria-pressed="false">Isento</button></div>
                 <div class="cc-note">Inflação (IPCA) mais uma taxa real fixa, compostas.</div>
@@ -606,11 +614,12 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
         </div>
         <div class="sc-cols">
           <div>
-            <div class="sc-t">Faixa de resultado por opção <em>taxa líquida a.a. · Q = queda · N = neutro · A = alta</em></div>
+            <div class="sc-t">Faixa de resultado por opção <em>taxa líquida a.a. · Q = queda · ● = neutro · A = alta · ★ = melhor do cenário</em></div>
             <div class="chart-box" id="scChartBox"><svg id="scChart" role="img" aria-label="Faixa de resultado por cenário"></svg></div>
           </div>
           <div>
-            <div class="sc-t">Pontos de empate com o Pré</div>
+            <div class="sc-t">Pontos de empate <em>contra a referência · demais indicadores no neutro</em></div>
+            <div class="pills mini be-ref" id="scRef" role="group" aria-label="Referência dos pontos de empate"></div>
             <div id="scBE" class="sc-be"></div>
           </div>
         </div>
@@ -1717,7 +1726,7 @@ $("eCopyT").addEventListener("click",()=>{ if(!eLast) return;
 
 /* =================== MÓDULO: COMPARADOR (cenários) =================== */
 const CK=["pre","pct","cdip","ipca"];
-let C={rate:{pre:13,pct:92,cdip:1,ipca:6.5}, isento:{pre:false,pct:true,cdip:false,ipca:false}, on:{pre:true,pct:true,cdip:true,ipca:true}, ini:toISO(today), fim:toISO(addMonths(today,24)), valor:100000, sc:{shC:2,shI:1,ov:{}}, det:false};
+let C={rate:{pre:13,pct:92,cdip:1,ipca:6.5}, isento:{pre:false,pct:true,cdip:false,ipca:false}, on:{pre:true,pct:true,cdip:true,ipca:true}, ini:toISO(today), fim:toISO(addMonths(today,24)), valor:100000, sc:{shC:2,shI:1,ov:{}}, det:false, ref:"auto"};
 try{ const cv=JSON.parse(localStorage.getItem("comparador.v1")||"null"); if(cv&&cv.rate) C=Object.assign(C,cv,{rate:Object.assign(C.rate,cv.rate),isento:Object.assign(C.isento,cv.isento||{}),on:Object.assign(C.on,cv.on||{}),sc:Object.assign(C.sc,cv.sc||{})}); }catch(e){}
 const cSave=()=>{ try{ localStorage.setItem("comparador.v1",JSON.stringify(C)); }catch(e){} };
 const cName = k => (k==="pre"?"Pré ":"")+fmtRate(k,C.rate[k]/100)+" · "+(C.isento[k]?"isento":"tributado");
@@ -1761,12 +1770,21 @@ function scenCalc(V,tipo,idx,x,ini,fim,path){
   const pctCdi=(Math.pow(1+aa252,1/252)-1)/(Math.pow(1+cdiMed,1/252)-1);
   return {dc,du,bruto,iof,ir,irv,liq,gLiq,aa252,am:Math.pow(1+aa252,21/252)-1,rb:Math.pow(F,252/du)-1,cdiMed,ipcaMed:Math.pow(Fi,252/du)-1,pctCdi};
 }
-// taxa constante do indexador que iguala o líquido da opção ao do Pré
-function breakeven(k,ini,fim,V,target){
-  const tipo=C.isento[k]?"isento":"trib", x=C.rate[k]/100;
-  const f=c=>{ const r= k==="ipca" ? simCalc(V,tipo,k,x,ini,fim,S.cdi/100,c) : simCalc(V,tipo,k,x,ini,fim,c,S.ipca/100); return r.err?NaN:r.liq-target; };
-  let lo= k==="ipca"?-0.10:0.0001, hi=0.60; if(!(f(lo)<0&&f(hi)>0)) return NaN;
-  for(let i=0;i<60;i++){ const m=(lo+hi)/2; (f(m)<0?lo=m:hi=m); } return (lo+hi)/2;
+// ponto de empate entre duas opções: valor constante do indicador (CDI ou IPCA médio) em que os líquidos se igualam.
+// O outro indicador fica no médio do neutro. Retorna o cruzamento mais próximo do neutro, ou quem vence em toda a faixa.
+function pairBE(r,k,ini,fim,V,avgN){
+  const drv=x=> x==="pre"?null : x==="ipca"?"ipca":"cdi";
+  const ind=(drv(r)==="cdi"||drv(k)==="cdi")?"cdi":"ipca";
+  const liq=(x,v)=>{ const t=C.isento[x]?"isento":"trib", o= ind==="cdi" ? simCalc(V,t,x,C.rate[x]/100,ini,fim,v,avgN.ipcaMed) : simCalc(V,t,x,C.rate[x]/100,ini,fim,avgN.cdiMed,v); return o.err?NaN:o.liq; };
+  const f=v=>liq(r,v)-liq(k,v);
+  const lo= ind==="cdi"?0.0025:-0.05, hi= ind==="cdi"?0.40:0.25, st=0.0025, ref= ind==="cdi"?avgN.cdiMed:avgN.ipcaMed;
+  let roots=[], pv=lo, pf=f(lo);
+  for(let v=lo+st; v<=hi+1e-9; v+=st){ const fv=f(v); if(isFinite(pf)&&isFinite(fv)&&(pf<0)!==(fv<0)){ let a=pv,b=v,fa=pf; for(let i=0;i<50;i++){ const m=(a+b)/2, fm=f(m); if((fm<0)===(fa<0)){a=m;fa=fm;} else b=m; } roots.push((a+b)/2); } pv=v; pf=fv; }
+  const mixed=drv(r)&&drv(k)&&drv(r)!==drv(k);
+  if(!roots.length){ const fm=f(ref); return {ind,mixed,be:NaN,always: fm>=0?r:k, lo,hi}; }
+  const be=roots.reduce((a,b)=>Math.abs(b-ref)<Math.abs(a-ref)?b:a);
+  const above= f(Math.min(hi,be+0.005))>=0 ? r : k;
+  return {ind,mixed,be,above,below: above===r?k:r};
 }
 function scenEditor(paths){
   if(!$("scEdB").children.length){
@@ -1812,13 +1830,20 @@ function cmpRender(){
   const any=res.neutro[A[0]];
   $("cDU").textContent=any.du.toLocaleString("pt-BR"); $("cDC").textContent=any.dc.toLocaleString("pt-BR");
   const best={}; SCN.forEach(s=>{ best[s]=A.reduce((a,b)=>res[s][b].liq>res[s][a].liq?b:a); });
-  const worst=k=>Math.min(...SCN.map(s=>res[s][k].liq));
-  const robust=A.reduce((a,b)=>worst(b)>worst(a)?b:a);
-  const multi=A.length>1;
-  document.querySelectorAll(".cmp th.cc").forEach(th=>{ const b=multi&&th.dataset.k===robust; th.classList.toggle("win",b); th.querySelector(".star").hidden=!b; });
+  // arrependimento: quanto cada opção deixa de ganhar para a melhor de cada cenário; vale o pior caso
+  const regret=k=>Math.max(...SCN.map(s=>res[s][best[s]].liq-res[s][k].liq));
+  const minReg=A.reduce((a,b)=>regret(b)<regret(a)?b:a);
+  const top=best.neutro, multi=A.length>1;
+  document.querySelectorAll(".cmp th.cc").forEach(th=>{ const b=multi&&th.dataset.k===top; th.classList.toggle("win",b); th.querySelector(".star").hidden=!b; });
   // cabeçalho
-  $("cWinK").textContent = multi ? "★ Mais robusta · melhor resultado no pior cenário" : "Opção selecionada";
-  $("cWinV").textContent = cName(robust);
+  $("cWinK").textContent = multi ? "★ Melhor no cenário neutro" : "Opção selecionada";
+  $("cWinV").textContent = cName(top);
+  $("cWinR").hidden=!multi;
+  if(multi) $("cWinR").innerHTML = regret(top)<0.005
+    ? `Vence nos três cenários.`
+    : minReg===top
+    ? `Também é a de menor arrependimento: perde no máximo <b>${brl(regret(top))}</b> para a melhor de algum cenário.`
+    : `Menor arrependimento: <b>${cName(minReg)}</b> · perde no máximo <b>${brl(regret(minReg))}</b> para a melhor de cada cenário (a do neutro perde até ${brl(regret(top))}).`;
   const shortN=k=>({pre:`Pré ${nf(C.rate.pre)}%`,pct:`${nf(C.rate.pct)}% CDI`,cdip:`CDI + ${nf(C.rate.cdip)}%`,ipca:`IPCA + ${nf(C.rate.ipca)}%`})[k];
   const ico={queda:"↓",neutro:"→",alta:"↑"};
   $("cWinS").innerHTML = `<div class="hsl">Melhor resultado em cada cenário</div>` + SCN.map(s=>`<div class="hs"><i>${ico[s]} ${SCL[s]}</i><b>${shortN(best[s])}</b><span>CDI médio ${nf(avg[s].cdiMed*100,1)}% · IPCA médio ${nf(avg[s].ipcaMed*100,1)}% a.a.</span></div>`).join("");
@@ -1829,7 +1854,8 @@ function cmpRender(){
   let h=`<tr class="gh"><td colspan="${A.length+1}">Valor líquido no vencimento · taxa líquida a.a.</td></tr>`;
   SCN.forEach(s=>{ h+=row(`<b>${SCL[s]}</b><span class="sl">${avgTxt(s)}</span>`, k=>{ const r=res[s][k]; return cell(k,`${brl(V+r.liq)}<span class="sl">${nf(r.aa252*100)}% a.a.</span>`, multi&&best[s]===k); }, "scn"+(s==="neutro"?" neu":"")); });
   h+=row("Amplitude (alta − queda)",k=> k==="pre" ? `<td class="num lock">travado</td>` : cell(k,"± "+brl(Math.abs(res.alta[k].liq-res.queda[k].liq)/2),false));
-  if(multi) h+=row("Diferença para a melhor (neutro)",k=>cell(k, best.neutro===k?"—":"− "+brl(res.neutro[best.neutro].liq-res.neutro[k].liq),false, best.neutro===k?"":"neg"));
+  if(multi){ h+=row("Diferença para a melhor (neutro)",k=>cell(k, best.neutro===k?"—":"− "+brl(res.neutro[best.neutro].liq-res.neutro[k].liq),false, best.neutro===k?"":"neg"));
+    h+=row(`Maior perda para a melhor do cenário<span class="sl">arrependimento máximo nos 3 cenários</span>`,k=>{ const g=regret(k); return cell(k, g<0.005?"—":"− "+brl(g), k===minReg, k===minReg?"rg-min":"neg"); }); }
   h+=`<tr class="tog"><td colspan="${A.length+1}"><button type="button" class="lnk" id="cDetT">${C.det?"▾ Ocultar":"▸ Mostrar"} detalhes do cenário neutro</button></td></tr>`;
   if(C.det){ const N=res.neutro, hasIof=A.some(k=>N[k].iof>0);
     h+=row("Taxa bruta a.a. (neutro)",k=>cell(k,nf(N[k].rb*100)+"%"),"sub")
@@ -1842,30 +1868,44 @@ function cmpRender(){
      + row("Equivale a (líquido)",k=>cell(k,nf(N[k].pctCdi*100)+"% do CDI"),"sub");
   }
   $("cBody").innerHTML=h;
-  // pontos de empate
-  if(A.includes("pre")){
-    const tgt=res.neutro.pre.liq, items=A.filter(k=>k!=="pre").map(k=>{ const be=breakeven(k,ini,fim,V,tgt); const lbl=k==="ipca"?"IPCA":"CDI";
-      const sc=SCN.map(s=>`${SCL[s].toLowerCase()} ${nf((k==="ipca"?avg[s].ipcaMed:avg[s].cdiMed)*100,1)}%`).join(" · ");
-      return `<div class="be">${cName("pre")} ganha de <b>${cName(k)}</b> se o ${lbl} médio do período ficar abaixo de <b>${isFinite(be)?nf(be*100,2)+"% a.a.":"—"}</b><small>${lbl} médio nos cenários: ${sc}</small></div>`; });
-    $("scBE").innerHTML = items.join("") || `<div class="be">Inclua uma opção pós-fixada para ver os pontos de empate.</div>`;
-  } else $("scBE").innerHTML=`<div class="be">Inclua o Pré na comparação para ver os pontos de empate.</div>`;
-  cLast={A,res,avg,V,ini,fim,paths,best,robust,R:res.neutro};
+  // pontos de empate contra a referência (padrão: melhor do neutro)
+  const ref = C.ref!=="auto"&&A.includes(C.ref) ? C.ref : top;
+  const shortK={pre:"Pré",pct:"%CDI",cdip:"CDI+",ipca:"IPCA+"};
+  $("scRef").innerHTML=`<button type="button" data-v="auto" aria-pressed="${C.ref==="auto"||!A.includes(C.ref)}">Auto · ${shortK[top]}</button>`+A.map(k=>`<button type="button" data-v="${k}" aria-pressed="${C.ref===k}">${shortK[k]}</button>`).join("");
+  $("scRef").hidden=!multi;
+  if(multi){
+    const pct=v=>nf(v*100,2)+"% a.a.";
+    $("scBE").innerHTML=A.filter(k=>k!==ref).map(k=>{ const b=pairBE(ref,k,ini,fim,V,avg.neutro), lbl=b.ind==="ipca"?"IPCA":"CDI";
+      const sc=SCN.map(s=>`${SCL[s].toLowerCase()} ${nf((b.ind==="ipca"?avg[s].ipcaMed:avg[s].cdiMed)*100,1)}%`).join(" · ");
+      const extra=b.mixed?` · IPCA fixo no neutro (${nf(avg.neutro.ipcaMed*100,1)}%)`:"";
+      if(!isFinite(b.be)) return `<div class="be be-x"><b>${cName(b.always)}</b> ganha com qualquer ${lbl} médio entre ${nf(b.lo*100,1)}% e ${nf(b.hi*100,0)}% a.a.<small>${lbl} médio nos cenários: ${sc}${extra}</small></div>`;
+      return `<div class="be"><b>${cName(b.above)}</b> ganha de <b>${cName(b.below)}</b> se o ${lbl} médio do período ficar acima de <b>${pct(b.be)}</b><small>${lbl} médio nos cenários: ${sc}${extra}</small></div>`; }).join("");
+  } else $("scBE").innerHTML=`<div class="be">Inclua mais de uma opção para ver os pontos de empate.</div>`;
+  cLast={A,res,avg,V,ini,fim,paths,best,top,minReg,R:res.neutro};
   drawScen();
 }
 function drawScen(){
-  if(!cLast) return; const {A,res}=cLast, svg=$("scChart"), box=$("scChartBox");
-  const W=Math.max(280,box.clientWidth), rowH=34, Pd={l:Math.min(178,W*0.42),r:16,t:8,b:26}, H=Pd.t+Pd.b+rowH*A.length;
+  if(!cLast) return; const {A,res,best,top}=cLast, svg=$("scChart"), box=$("scChartBox"), multi=A.length>1;
+  const W=Math.max(280,box.clientWidth), rowH=34, Pd={l:Math.min(178,W*0.42),r:16,t:24,b:26}, H=Pd.t+Pd.b+rowH*A.length;
   svg.setAttribute("viewBox",`0 0 ${W} ${H}`);
   const vals=A.flatMap(k=>SCN.map(s=>res[s][k].aa252*100)); let lo=Math.min(...vals), hi=Math.max(...vals);
   const pad=Math.max(0.3,(hi-lo)*0.12); const ticks=niceTicks(lo-pad,hi+pad,5); lo=ticks[0]; hi=ticks[ticks.length-1];
   const X=v=>Pd.l+(v-lo)/(hi-lo)*(W-Pd.l-Pd.r);
   let s="";
   ticks.forEach(v=>{ s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${Pd.t}" y2="${H-Pd.b}" stroke="var(--line)"/><text class="ax" x="${X(v)}" y="${H-Pd.b+16}" text-anchor="middle">${nf(v,(ticks[1]-ticks[0])<1?1:0)}%</text>`; });
+  // linha de referência: a melhor do neutro
+  if(multi){ const xr=X(res.neutro[top].aa252*100);
+    s+=`<line x1="${xr}" x2="${xr}" y1="${Pd.t-8}" y2="${H-Pd.b}" stroke="var(--teal)" stroke-width="1.5" stroke-dasharray="4 3"/><text class="ax" x="${xr}" y="${Pd.t-12}" text-anchor="middle" style="fill:var(--teal-ink);font-weight:600">melhor neutro</text>`; }
+  const won=(k,sc)=>multi&&best[sc]===k;
   A.forEach((k,i)=>{ const y=Pd.t+rowH*(i+.5), q=res.queda[k].aa252*100, n=res.neutro[k].aa252*100, a=res.alta[k].aa252*100;
-    s+=`<text x="${Pd.l-10}" y="${y+4}" text-anchor="end" style="font:500 11px var(--f-num);fill:var(--fg)">${(k==="pre"?"Pré ":"")+fmtRate(k,C.rate[k]/100)+(C.isento[k]?" isento":"")}</text>`;
+    const wins=SCN.filter(sc=>won(k,sc)).map(sc=>sc[0].toUpperCase());
+    s+=`<text x="${Pd.l-10}" y="${y+4}" text-anchor="end" style="font:${wins.length?600:500} 11px var(--f-num);fill:${wins.length?"var(--teal-ink)":"var(--fg)"}">${(k==="pre"?"Pré ":"")+fmtRate(k,C.rate[k]/100)+(C.isento[k]?" isento":"")}</text>`;
     if(k!=="pre"){ s+=`<line x1="${X(Math.min(q,a))}" x2="${X(Math.max(q,a))}" y1="${y}" y2="${y}" stroke="var(--fg-3)" stroke-width="2"/>`;
-      [[q,"Q"],[a,"A"]].forEach(([v,l])=>{ s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${y-6}" y2="${y+6}" stroke="var(--fg-2)" stroke-width="2"/><text class="ax" x="${X(v)}" y="${y-9}" text-anchor="middle">${l}</text>`; }); }
-    s+=`<circle cx="${X(n)}" cy="${y}" r="5.5" fill="${k==="pre"?"var(--orange)":"var(--teal)"}" stroke="var(--surface)" stroke-width="2"><title>${cName(k)} · queda ${nf(q)}% · neutro ${nf(n)}% · alta ${nf(a)}%</title></circle>`;
+      [[q,"Q","queda"],[a,"A","alta"]].forEach(([v,l,sc])=>{ const w=won(k,sc), c=w?"var(--teal-ink)":"var(--fg-2)";
+        s+=`<line x1="${X(v)}" x2="${X(v)}" y1="${y-6}" y2="${y+6}" stroke="${c}" stroke-width="${w?3:2}"/><text class="ax" x="${X(v)}" y="${y-9}" text-anchor="middle" style="${w?"fill:var(--teal-ink);font-weight:700":""}">${l}${w?"★":""}</text>`; }); }
+    else if(wins.length) s+=`<text class="ax" x="${X(n)}" y="${y-9}" text-anchor="middle" style="fill:var(--teal-ink);font-weight:700">${wins.join("·")}★</text>`;
+    const wn=won(k,"neutro");
+    s+=`<circle cx="${X(n)}" cy="${y}" r="5.5" fill="${wn?"var(--teal)":"var(--surface)"}" stroke="${wn?"var(--surface)":"var(--fg-2)"}" stroke-width="2"><title>${cName(k)} · queda ${nf(q)}% · neutro ${nf(n)}% · alta ${nf(a)}%</title></circle>`;
   });
   svg.innerHTML=s;
 }
@@ -1877,6 +1917,7 @@ CK.forEach(k=>{
   document.querySelectorAll(`.pills.mini[data-k="${k}"] button`).forEach(b=>b.addEventListener("click",()=>{ C.isento[k]=b.dataset.v==="isento"; cmpRender(); }));
 });
 $("cBody").addEventListener("click",e=>{ if(e.target.id==="cDetT"){ C.det=!C.det; cmpRender(); } });
+$("scRef").addEventListener("click",e=>{ const b=e.target.closest("button[data-v]"); if(!b) return; C.ref=b.dataset.v; cmpRender(); });
 document.querySelectorAll(".cmp .lnk[data-open]").forEach(b=>b.addEventListener("click",()=>{
   const k=b.dataset.open; T.tipo=C.isento[k]?"isento":"trib"; T.idx=k; T.rate[k]=C.rate[k]; T.ini=C.ini; T.fim=C.fim; T.valor=C.valor;
   if(k!=="pre" && cLast){ S.cdi=+(cLast.avg.neutro.cdiMed*100).toFixed(2); S.ipca=+(cLast.avg.neutro.ipcaMed*100).toFixed(2); S.manual=true; }
