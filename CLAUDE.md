@@ -44,13 +44,13 @@ Nasceu da conversão de planilhas Excel do usuário (`Simulador_Bancarios_aai.xl
    gerador de **escada (ladder)** com inclinação de taxa por degrau, indicadores, cronograma de vencimentos
    (barras principal × juros), composição, e **reinvestimento da escada** (horizonte, taxa: degrau longo /
    informada / ajuste; reaplicar tudo ou resgatar juros; comparação com aplicação única).
-4. **Capital protegido** (`#protegido`) — quanto aplicar na renda fixa para recompor o capital (nominal ou
+4. **Gross-up** (`#grossup`) — isento ↔ tributável nos 4 indexadores, equivalência por indexador,
+   resultado em R$, curva da taxa equivalente por prazo (composto × aproximação linear).
+5. **Equivalência de taxas** (`#equivalencia`) — converte uma taxa entre Pré, %CDI, CDI+ e IPCA+;
+   sensibilidade ao CDI; alterna %CDI diário (mercado) × anual simples (planilha).
+6. **Capital protegido** (`#protegido`) — quanto aplicar na renda fixa para recompor o capital (nominal ou
    corrigido pelo IPCA) no vencimento; saldo para risco, cenários do ativo de risco, ponto de empate com 100% RF.
    O retorno do ativo de risco é tratado como **já líquido** de impostos.
-5. **Gross-up** (`#grossup`) — isento ↔ tributável nos 4 indexadores, equivalência por indexador,
-   resultado em R$, curva da taxa equivalente por prazo (composto × aproximação linear).
-6. **Equivalência de taxas** (`#equivalencia`) — converte uma taxa entre Pré, %CDI, CDI+ e IPCA+;
-   sensibilidade ao CDI; alterna %CDI diário (mercado) × anual simples (planilha).
 
 ## Estrutura do código (`index.html`)
 

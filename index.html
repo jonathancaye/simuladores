@@ -514,9 +514,9 @@ footer.disc{margin-top:14px;padding-top:8px;border-top:1px solid var(--line);fon
     <button class="tab" role="tab" aria-selected="true" data-tab="sim"><kbd>1</kbd>Simulador</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="cmp"><kbd>2</kbd>Comparador</button>
     <button class="tab" role="tab" aria-selected="false" data-tab="cart"><kbd>3</kbd>Carteira</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="prot"><kbd>4</kbd>Capital protegido</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="gross"><kbd>5</kbd>Gross-up</button>
-    <button class="tab" role="tab" aria-selected="false" data-tab="eq"><kbd>6</kbd>Equivalência</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="gross"><kbd>4</kbd>Gross-up</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="eq"><kbd>5</kbd>Equivalência</button>
+    <button class="tab" role="tab" aria-selected="false" data-tab="prot"><kbd>6</kbd>Capital protegido</button>
   </nav>
 
   <div class="module" id="m-cmp" hidden>
@@ -2315,7 +2315,7 @@ fetch("indicadores.json",{cache:"no-store"}).then(r=>r.ok?r.json():null).then(j=
 document.addEventListener("keydown",e=>{
   if(e.altKey||e.ctrlKey||e.metaKey) return;
   const tg=e.target; if(tg&&(tg.tagName==="INPUT"||tg.tagName==="TEXTAREA"||tg.isContentEditable)) return;
-  const k={"1":"sim","2":"cmp","3":"cart","4":"prot","5":"gross","6":"eq"}[e.key]; if(k){ showTab(k); }
+  const k={"1":"sim","2":"cmp","3":"cart","4":"gross","5":"eq","6":"prot"}[e.key]; if(k){ showTab(k); }
 });
 showTab(startTab);
 
