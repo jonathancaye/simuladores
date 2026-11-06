@@ -1,7 +1,7 @@
 {
   "cdi": {
     "valor": 13.65,
-    "data": "04/11/2026",
+    "data": "05/11/2026",
     "fonte": "BCB/SGS 4389"
   },
   "ipca_12m": {
@@ -9,7 +9,7 @@
     "data": "01/09/2026",
     "fonte": "BCB/SGS 13522"
   },
-  "atualizado_em": "2026-11-05T18:29-03:00",
+  "atualizado_em": "2026-11-06T16:33-03:00",
   "ipca_focus_12m": {
     "valor": 4.9553,
     "data": "2026-10-30",
@@ -37,8 +37,5 @@
       "2029": 3.98,
       "2030": 3.815
     }
-  },
-  "erros": [
-    "ipca_12m: JSONDecodeError: Expecting value: line 1 column 1 (char 0)"
-  ]
+  }
 }
