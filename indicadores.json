@@ -1,7 +1,7 @@
 {
   "cdi": {
     "valor": 13.65,
-    "data": "09/11/2026",
+    "data": "10/11/2026",
     "fonte": "BCB/SGS 4389"
   },
   "ipca_12m": {
@@ -9,7 +9,7 @@
     "data": "01/09/2026",
     "fonte": "BCB/SGS 13522"
   },
-  "atualizado_em": "2026-11-10T16:51-03:00",
+  "atualizado_em": "2026-11-11T16:43-03:00",
   "ipca_focus_12m": {
     "valor": 5.0117,
     "data": "2026-11-06",
